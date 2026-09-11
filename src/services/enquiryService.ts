@@ -25,7 +25,10 @@ export async function submitEnquiry(formData: EnquiryFormData): Promise<EnquiryS
     return { success: false, message: 'Please provide brief details about your requirement.' };
   }
 
-  // 3. Supabase Insert (if configured)
+  // 3. Dispatch Email Notification via Resend Serverless Function
+  sendAdminNotificationEmail(formData);
+
+  // 4. Supabase Insert (if configured)
   if (isSupabaseConfigured && supabase) {
     try {
       const { data, error } = await supabase
@@ -68,9 +71,8 @@ export async function submitEnquiry(formData: EnquiryFormData): Promise<EnquiryS
     }
   }
 
-  // 4. Local simulation mode when Supabase is not connected
-  // Allows testing form workflow without database credentials
-  await new Promise((resolve) => setTimeout(resolve, 600)); // Simulate brief network roundtrip
+  // 5. Local fallback when Supabase is not connected
+  await new Promise((resolve) => setTimeout(resolve, 600));
 
   return {
     success: true,
@@ -78,3 +80,20 @@ export async function submitEnquiry(formData: EnquiryFormData): Promise<EnquiryS
     enquiryId: 'local-' + Date.now(),
   };
 }
+
+async function sendAdminNotificationEmail(formData: EnquiryFormData): Promise<void> {
+  try {
+    fetch('/api/send-enquiry', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    }).catch((err) => {
+      console.warn('Enquiry email notification background warning:', err);
+    });
+  } catch (err) {
+    console.warn('Could not dispatch enquiry email notification:', err);
+  }
+}
+
