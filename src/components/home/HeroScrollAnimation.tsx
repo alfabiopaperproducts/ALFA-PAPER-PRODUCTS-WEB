@@ -306,12 +306,11 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           animRef.current.frame = toFrame;
           drawFrame(toFrame);
 
-          // Generous 300ms cooldown: ensures Lenis has 100% settled at targetScrollY
-          // and any residual trackpad momentum is completely dead before unlocking
+          // Generous 280ms cooldown: ensures Lenis has settled and trackpad inertia is dead
           setTimeout(() => {
             isAnimatingRef.current = false;
             wheelAccumulatorRef.current = 0;
-          }, 300);
+          }, 280);
         },
       });
     },
@@ -331,8 +330,6 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         end: () => `+=${window.innerHeight * 4}`,
         pinSpacing: true,
         anticipatePin: 1,
-        // Notice: NO onUpdate here! The state machine alone controls the frames and stages.
-        // This completely prevents background scroll progress from ever snapping back automatically.
       });
 
       scrollTriggerRef.current = st;
@@ -344,12 +341,12 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     };
   }, []);
 
-  // Controlled Desktop Scroll & Gesture Engine with Anti-Rebound Guard
+  // Controlled Desktop Scroll & Gesture Engine with Immediate Next-Section Transition
   useEffect(() => {
     const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
     if (!isDesktop) return;
 
-    const WHEEL_THRESHOLD = 25; // Required delta before advancing (filters micro-jitter)
+    const WHEEL_THRESHOLD = 22; // Required delta before advancing
     let wheelResetTimer: ReturnType<typeof setTimeout> | null = null;
     let lastDirection = 0; // 1 = down, -1 = up
     let lastDirectionTime = 0;
@@ -363,13 +360,11 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
 
       const currentDir = e.deltaY > 0 ? 1 : -1;
 
-      // Trackpad Rebound Guard:
-      // When lifting fingers from a trackpad, a momentary counter-scroll pulse occurs.
-      // If direction flipped within 350ms of the previous scroll, swallow the rebound!
+      // Trackpad Rebound Guard (350ms deadzone)
       if (lastDirection !== 0 && currentDir !== lastDirection) {
         const timeSinceFlip = Date.now() - lastDirectionTime;
         if (timeSinceFlip < 350) {
-          if (scrollY < heroMaxScroll - 20) {
+          if (scrollY < heroMaxScroll + 100) {
             e.preventDefault();
           }
           return;
@@ -381,13 +376,12 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         lastDirection = 1;
         lastDirectionTime = Date.now();
 
-        // While within the hero pinned range (before the final product at Stage 4):
-        if (scrollY < heroMaxScroll - 20) {
-          e.preventDefault(); // Intercept raw scroll
+        // While at Product 1 to 4 (stages 0, 1, 2, 3): Advance 1 product
+        if (currentStageRef.current < 4) {
+          e.preventDefault();
 
           if (isAnimatingRef.current) return;
 
-          // Auto-decay timer: reset accumulator if no wheel pulses for 200ms
           if (wheelResetTimer) clearTimeout(wheelResetTimer);
           wheelResetTimer = setTimeout(() => {
             wheelAccumulatorRef.current = 0;
@@ -396,18 +390,52 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           wheelAccumulatorRef.current += e.deltaY;
           if (wheelAccumulatorRef.current >= WHEEL_THRESHOLD) {
             wheelAccumulatorRef.current = 0;
-            const nextStage = Math.min(4, currentStageRef.current + 1);
-            if (nextStage !== currentStageRef.current) {
-              transitionToStage(nextStage);
+            transitionToStage(currentStageRef.current + 1);
+          }
+          return;
+        }
+
+        // At Product 5 (Stage 4): The animation has finished!
+        // Immediately smoothly scroll down to the next section on ONE single scroll!
+        const heroSection = document.getElementById('hero-section');
+        const nextSectionTop = heroSection ? heroSection.offsetTop : (st ? st.end : 4 * vh) + 60;
+
+        if (scrollY < nextSectionTop - 30) {
+          e.preventDefault();
+
+          if (isAnimatingRef.current) return;
+
+          if (wheelResetTimer) clearTimeout(wheelResetTimer);
+          wheelResetTimer = setTimeout(() => {
+            wheelAccumulatorRef.current = 0;
+          }, 200);
+
+          wheelAccumulatorRef.current += e.deltaY;
+          if (wheelAccumulatorRef.current >= WHEEL_THRESHOLD) {
+            wheelAccumulatorRef.current = 0;
+            isAnimatingRef.current = true;
+
+            if (lenis) {
+              lenis.scrollTo(nextSectionTop, {
+                duration: 0.85,
+                easing: (t: number) => 1 - Math.pow(1 - t, 3),
+                onComplete: () => {
+                  setTimeout(() => {
+                    isAnimatingRef.current = false;
+                  }, 250);
+                },
+              });
+            } else {
+              window.scrollTo({ top: nextSectionTop, behavior: 'smooth' });
+              setTimeout(() => {
+                isAnimatingRef.current = false;
+              }, 850);
             }
           }
           return;
         }
 
-        // At Stage 4 (scrollY >= heroMaxScroll - 20):
-        // All 5 products have now been shown!
-        // DO NOT call e.preventDefault()!
-        // ScrollTrigger reaches 'end', unpins the element, and page scrolls down to next section!
+        // Already at/past the next section: normal page scroll continues
         return;
       }
 
@@ -416,14 +444,36 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         lastDirection = -1;
         lastDirectionTime = Date.now();
 
-        // If user is currently down in the rest of the website below hero:
-        if (scrollY > heroMaxScroll + 30) {
+        const heroSection = document.getElementById('hero-section');
+        const nextSectionTop = heroSection ? heroSection.offsetTop : (st ? st.end : 4 * vh) + 60;
+
+        // If user is deep down in the website below hero:
+        if (scrollY > nextSectionTop + 50) {
           // Allow normal upward scrolling back towards the hero
           return;
         }
 
-        // If user is at or entering the hero pinned section:
-        if (currentStageRef.current > 0 && scrollY <= heroMaxScroll + 30) {
+        // If user is at or near the top of the next section, scroll UP immediately snaps back into Product 5:
+        if (scrollY >= heroMaxScroll - 10 && scrollY <= nextSectionTop + 50) {
+          e.preventDefault();
+
+          if (isAnimatingRef.current) return;
+
+          if (wheelResetTimer) clearTimeout(wheelResetTimer);
+          wheelResetTimer = setTimeout(() => {
+            wheelAccumulatorRef.current = 0;
+          }, 200);
+
+          wheelAccumulatorRef.current += e.deltaY;
+          if (wheelAccumulatorRef.current <= -WHEEL_THRESHOLD) {
+            wheelAccumulatorRef.current = 0;
+            transitionToStage(4); // Snap back to Product 5 (Frame 122)
+          }
+          return;
+        }
+
+        // Inside the hero pinned section (Stage 1 to 4): Step backward 1 product
+        if (currentStageRef.current > 0) {
           e.preventDefault();
 
           if (isAnimatingRef.current) return;
@@ -437,9 +487,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           if (wheelAccumulatorRef.current <= -WHEEL_THRESHOLD) {
             wheelAccumulatorRef.current = 0;
             const prevStage = Math.max(0, currentStageRef.current - 1);
-            if (prevStage !== currentStageRef.current) {
-              transitionToStage(prevStage);
-            }
+            transitionToStage(prevStage);
           }
           return;
         }
@@ -450,14 +498,22 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     const handleKeyDown = (e: KeyboardEvent) => {
       const st = scrollTriggerRef.current;
       const vh = window.innerHeight;
-      const maxScroll = st ? st.end : 4 * vh;
-      if (window.scrollY > maxScroll + 20) return;
+      const heroSection = document.getElementById('hero-section');
+      const nextSectionTop = heroSection ? heroSection.offsetTop : (st ? st.end : 4 * vh) + 60;
+
+      if (window.scrollY > nextSectionTop + 50) return;
 
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
         if (currentStageRef.current < 4) {
           e.preventDefault();
           if (!isAnimatingRef.current) {
             transitionToStage(currentStageRef.current + 1);
+          }
+        } else if (currentStageRef.current === 4 && window.scrollY < nextSectionTop - 30) {
+          e.preventDefault();
+          if (!isAnimatingRef.current) {
+            if (lenis) lenis.scrollTo(nextSectionTop, { duration: 0.85 });
+            else window.scrollTo({ top: nextSectionTop, behavior: 'smooth' });
           }
         }
       } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
@@ -496,12 +552,13 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     drawFrame(122);
     isAnimatingRef.current = false;
 
+    const heroSection = document.getElementById('hero-section');
     const st = scrollTriggerRef.current;
     const vh = window.innerHeight;
-    const targetScrollY = (st ? st.end : 4 * vh) + 20;
+    const targetScrollY = heroSection ? heroSection.offsetTop : (st ? st.end : 4 * vh) + 60;
 
     if (lenis) {
-      lenis.scrollTo(targetScrollY, { duration: 0.9 });
+      lenis.scrollTo(targetScrollY, { duration: 0.85 });
     } else {
       window.scrollTo({ top: targetScrollY, behavior: 'smooth' });
     }
