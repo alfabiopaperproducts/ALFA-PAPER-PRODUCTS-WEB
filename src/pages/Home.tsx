@@ -98,7 +98,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
       <HeroScrollAnimation onOpenQuoteModal={onOpenQuoteModal} />
 
       {/* 1. HERO SECTION */}
-      <section className="relative pt-28 pb-16 lg:pt-36 lg:pb-24 bg-gradient-to-b from-kraft-100/70 via-white to-white border-b border-charcoal-100/60 overflow-hidden">
+      <section id="hero-section" className="relative pt-28 pb-16 lg:pt-36 lg:pb-24 bg-gradient-to-b from-kraft-100/70 via-white to-white border-b border-charcoal-100/60 overflow-hidden">
         {/* Decorative background blur shapes */}
         <div className="absolute top-10 right-5 lg:right-20 w-72 lg:w-96 h-72 lg:h-96 rounded-full bg-brand-500/10 blur-3xl pointer-events-none -z-10 hero-bg-leaf" />
         <div className="absolute bottom-5 left-5 w-64 h-64 rounded-full bg-kraft-300/20 blur-2xl pointer-events-none -z-10" />

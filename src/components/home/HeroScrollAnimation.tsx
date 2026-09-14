@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { gsap, ScrollTrigger } from '../../lib/gsap';
+import { gsap } from '../../lib/gsap';
 import { ArrowDown, ChevronRight, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
 
 interface HeroScrollAnimationProps {
@@ -8,8 +8,7 @@ interface HeroScrollAnimationProps {
 
 interface ProductStep {
   stepIndex: number;
-  startFrame: number;
-  endFrame: number;
+  frame: number;
   title: string;
   subtitle: string;
   category: string;
@@ -20,14 +19,13 @@ interface ProductStep {
   navLabel: string;
 }
 
-const TOTAL_FRAMES = 123; // Alfa_00000.webp to Alfa_00122.webp
-const MILESTONES = [0, 0.25, 0.5, 0.75, 1.0];
+const TOTAL_FRAMES = 123; // Frame 0 to Frame 122
+const STAGE_FRAMES = [0, 31, 61, 91, 122];
 
 const PRODUCT_STEPS: ProductStep[] = [
   {
     stepIndex: 0,
-    startFrame: 0,
-    endFrame: 31,
+    frame: 0,
     category: 'Hot Beverage Packaging',
     badge: '100% Biodegradable',
     title: 'Ripple Kraft Paper Cups',
@@ -40,8 +38,7 @@ const PRODUCT_STEPS: ProductStep[] = [
   },
   {
     stepIndex: 1,
-    startFrame: 32,
-    endFrame: 61,
+    frame: 31,
     category: 'Commercial Food Takeaway',
     badge: 'Oil & Grease Resistant',
     title: 'Eco Clamshell Meal Boxes',
@@ -54,8 +51,7 @@ const PRODUCT_STEPS: ProductStep[] = [
   },
   {
     stepIndex: 2,
-    startFrame: 62,
-    endFrame: 91,
+    frame: 61,
     category: 'Food Service Containers',
     badge: 'Compostability Tested',
     title: 'Paper Food Tubs & Bowls',
@@ -68,8 +64,7 @@ const PRODUCT_STEPS: ProductStep[] = [
   },
   {
     stepIndex: 3,
-    startFrame: 92,
-    endFrame: 122,
+    frame: 91,
     category: 'Catering & Events',
     badge: 'CPCB Approved',
     title: 'Heavy-Duty Paper Plates',
@@ -82,8 +77,7 @@ const PRODUCT_STEPS: ProductStep[] = [
   },
   {
     stepIndex: 4,
-    startFrame: 122,
-    endFrame: 122,
+    frame: 122,
     category: 'Bakery & Pastry',
     badge: 'Commercial Grade',
     title: 'Clear Window Bakery Boxes',
@@ -103,26 +97,29 @@ const getFrameUrl = (index: number) => {
 
 export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpenQuoteModal }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Store preloaded images in a ref to avoid React state re-renders during 60fps scrub
+  // Store preloaded images in a ref to avoid React state re-renders during animation
   const imagesRef = useRef<(HTMLImageElement | null)[]>(new Array(TOTAL_FRAMES).fill(null));
   const currentFrameRef = useRef<number>(0);
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
-  const lastMilestoneRef = useRef<number>(0);
-  const lastScrollDirectionRef = useRef<number>(1);
+  const animRef = useRef<{ frame: number }>({ frame: 0 });
+
+  // Controlled stage state machine (0, 1, 2, 3, 4)
+  const currentStageRef = useRef<number>(0);
+  const isAnimatingRef = useRef<boolean>(false);
+  const wheelAccumulatorRef = useRef<number>(0);
+  const reachedTopTimeRef = useRef<number>(0);
+  const lastScrollYRef = useRef<number>(0);
 
   const [activeStep, setActiveStep] = useState<number>(0);
   const [loadProgress, setLoadProgress] = useState<number>(0);
 
-  // Helper to find closest available loaded image if user scrubs quickly
+  // Helper to find closest available loaded image if an intermediate frame is missing
   const findNearestImage = useCallback((targetIndex: number): HTMLImageElement | null => {
     const images = imagesRef.current;
     if (images[targetIndex]?.complete && images[targetIndex]?.naturalWidth) {
       return images[targetIndex];
     }
-    // Search outwards from targetIndex
     for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
       const lower = targetIndex - offset;
       const upper = targetIndex + offset;
@@ -136,12 +133,12 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     return null;
   }, []);
 
-  // Draw image on canvas using object-fit: cover logic
+  // Hardware-accelerated canvas renderer with object-fit: cover logic
   const drawFrame = useCallback(
     (frameIndex: number) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { alpha: false });
       if (!ctx) return;
 
       const img = findNearestImage(frameIndex);
@@ -159,7 +156,9 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
       ctx.save();
       ctx.scale(dpr, dpr);
 
-      // Object-fit: cover calculation
+      ctx.fillStyle = '#f4f2ee';
+      ctx.fillRect(0, 0, width, height);
+
       const imgRatio = img.naturalWidth / img.naturalHeight;
       const canvasRatio = width / height;
 
@@ -182,20 +181,14 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     [findNearestImage]
   );
 
-  // 3-Tier Progressive Preloading Architecture
+  // Fast Concurrency Preloading Architecture
   useEffect(() => {
     let isCancelled = false;
     let loadedCount = 0;
 
-    const updateProgress = () => {
-      if (isCancelled) return;
-      loadedCount++;
-      setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
-    };
-
     const loadImage = (index: number): Promise<HTMLImageElement> => {
       return new Promise((resolve) => {
-        if (imagesRef.current[index]) {
+        if (imagesRef.current[index]?.complete && imagesRef.current[index]?.naturalWidth) {
           resolve(imagesRef.current[index]!);
           return;
         }
@@ -204,8 +197,10 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         img.onload = () => {
           if (!isCancelled) {
             imagesRef.current[index] = img;
-            updateProgress();
-            // If this is the current active frame, render immediately
+            loadedCount++;
+            if (loadedCount % 8 === 0 || loadedCount === TOTAL_FRAMES) {
+              setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
+            }
             if (index === currentFrameRef.current) {
               drawFrame(index);
             }
@@ -214,50 +209,43 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         };
         img.onerror = () => {
           if (!isCancelled) {
-            updateProgress();
+            loadedCount++;
+            if (loadedCount % 8 === 0 || loadedCount === TOTAL_FRAMES) {
+              setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
+            }
           }
           resolve(img);
         };
       });
     };
 
-    // Tier 1: Load frame 0 immediately for instant display (< 80ms)
-    loadImage(0).then(() => {
-      if (!isCancelled) {
-        drawFrame(0);
+    // 1. Immediately load milestone keyframes (0, 31, 61, 91, 122) for instant landing
+    Promise.all(STAGE_FRAMES.map((f) => loadImage(f))).then(() => {
+      if (isCancelled) return;
+      drawFrame(0);
+
+      // 2. Stream all remaining frames in concurrent batches of 16
+      const remaining: number[] = [];
+      for (let i = 0; i < TOTAL_FRAMES; i++) {
+        if (!STAGE_FRAMES.includes(i)) remaining.push(i);
       }
 
-      // Tier 2: Preload sequence milestones in parallel
-      const landmarks = [31, 61, 91, 122];
-      Promise.all(landmarks.map((idx) => loadImage(idx))).then(() => {
-        if (isCancelled) return;
-
-        // Tier 3: Stride loading of remaining frames
-        const remaining: number[] = [];
-        for (let i = 2; i < TOTAL_FRAMES; i += 2) {
-          if (!landmarks.includes(i)) remaining.push(i);
+      const batchSize = 16;
+      const loadBatches = async () => {
+        for (let i = 0; i < remaining.length; i += batchSize) {
+          if (isCancelled) break;
+          const batch = remaining.slice(i, i + batchSize);
+          await Promise.all(batch.map((idx) => loadImage(idx)));
         }
-        for (let i = 1; i < TOTAL_FRAMES; i += 2) {
-          if (!landmarks.includes(i)) remaining.push(i);
-        }
+      };
 
-        const loadBatch = async (batch: number[]) => {
-          for (const idx of batch) {
-            if (isCancelled) break;
-            await loadImage(idx);
-          }
-        };
-
-        const chunkSize = Math.ceil(remaining.length / 4);
-        for (let c = 0; c < 4; c++) {
-          loadBatch(remaining.slice(c * chunkSize, (c + 1) * chunkSize));
-        }
-      });
+      loadBatches();
     });
 
     const handleResize = () => {
       drawFrame(currentFrameRef.current);
     };
+
     window.addEventListener('resize', handleResize);
 
     return () => {
@@ -266,131 +254,202 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     };
   }, [drawFrame]);
 
-  // Setup GSAP ScrollTrigger with Stepped Snap
-  // Setup GSAP ScrollTrigger with Directional Auto-Scroll Snap
-  useEffect(() => {
-    if (!containerRef.current || !pinRef.current) return;
+  // Smooth Interpolated Transition to Target Stage
+  const animateToStage = useCallback(
+    (targetStage: number) => {
+      if (targetStage < 0 || targetStage >= STAGE_FRAMES.length) return;
+      if (isAnimatingRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Directional auto-scroll snap: even on the tiniest scroll gesture (1 point/notch),
-      // auto-scroll forward to the next end sequence instead of reversing back!
-      const customSnapTo = (progress: number) => {
-        const currentMilestone = lastMilestoneRef.current;
-        const currentBase = MILESTONES[currentMilestone] ?? 0;
-        const delta = progress - currentBase;
-        const dir = lastScrollDirectionRef.current;
-        const threshold = 0.0005; // Any scroll > 0.05% of track (~1.8px)
+      const fromFrame = currentFrameRef.current;
+      const toFrame = STAGE_FRAMES[targetStage];
+      if (fromFrame === toFrame) return;
 
-        let targetIndex = currentMilestone;
+      // Lock scroll triggers while transition runs
+      isAnimatingRef.current = true;
+      currentStageRef.current = targetStage;
+      setActiveStep(targetStage);
 
-        if (dir > 0 && (delta > threshold || progress > currentBase + threshold)) {
-          // User scrolled DOWN: MUST advance to next sequence, NEVER reverse back!
-          targetIndex = Math.min(currentMilestone + 1, MILESTONES.length - 1);
+      // Snappy, premium duration: 0.65s for 1 step (~30 frames)
+      const stepDistance = Math.abs(targetStage - (PRODUCT_STEPS.find((p) => p.frame === fromFrame)?.stepIndex ?? 0));
+      const duration = Math.max(0.65, Math.min(0.65 + (stepDistance - 1) * 0.15, 0.95));
 
-          // If user scrolled hard past multiple milestones
-          for (let i = targetIndex; i < MILESTONES.length; i++) {
-            if (progress > MILESTONES[i] - 0.04) {
-              targetIndex = Math.min(i + 1, MILESTONES.length - 1);
-            }
+      gsap.killTweensOf(animRef.current);
+      gsap.to(animRef.current, {
+        frame: toFrame,
+        duration: duration,
+        ease: 'power2.out', // Quick initial acceleration, smooth deceleration, exact landing
+        onUpdate: () => {
+          const current = Math.round(animRef.current.frame);
+          if (current !== currentFrameRef.current) {
+            currentFrameRef.current = current;
+            drawFrame(current);
           }
-        } else if (dir < 0 && (delta < -threshold || progress < currentBase - threshold)) {
-          // User scrolled UP: MUST retreat to previous sequence, NEVER reverse forward!
-          targetIndex = Math.max(currentMilestone - 1, 0);
-
-          // If user scrolled hard backward past multiple milestones
-          for (let i = targetIndex; i >= 0; i--) {
-            if (progress < MILESTONES[i] + 0.04) {
-              targetIndex = Math.max(i - 1, 0);
-            }
-          }
-        } else {
-          targetIndex = currentMilestone;
-        }
-
-        lastMilestoneRef.current = targetIndex;
-        return MILESTONES[targetIndex];
-      };
-
-      const st = ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top top',
-        end: '+=400%',
-        pin: pinRef.current,
-        anticipatePin: 1,
-        scrub: 0.3,
-        snap: {
-          snapTo: customSnapTo,
-          duration: { min: 0.35, max: 0.65 },
-          delay: 0.02,
-          ease: 'power2.out',
-          inertia: false,
         },
-        onUpdate: (self) => {
-          const progress = self.progress; // 0.0 to 1.0
+        onComplete: () => {
+          currentFrameRef.current = toFrame;
+          animRef.current.frame = toFrame;
+          drawFrame(toFrame);
 
-          if (self.direction !== 0) {
-            lastScrollDirectionRef.current = self.direction;
-          }
-
-          // Keep lastMilestoneRef in sync when resting near any milestone
-          for (let i = 0; i < MILESTONES.length; i++) {
-            if (Math.abs(progress - MILESTONES[i]) < 0.015) {
-              lastMilestoneRef.current = i;
-              break;
-            }
-          }
-
-          const targetFrame = Math.min(Math.round(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
-          currentFrameRef.current = targetFrame;
-          drawFrame(targetFrame);
-
-          // Calculate active step (5 milestones: 0, 1, 2, 3, 4)
-          let step = 0;
-          if (progress >= 0.875) step = 4;
-          else if (progress >= 0.625) step = 3;
-          else if (progress >= 0.375) step = 2;
-          else if (progress >= 0.125) step = 1;
-          else step = 0;
-
-          setActiveStep(step);
+          // Cooldown lock to absorb trackpad momentum and prevent accidental multi-stage skips
+          setTimeout(() => {
+            isAnimatingRef.current = false;
+            wheelAccumulatorRef.current = 0;
+          }, 200);
         },
       });
+    },
+    [drawFrame]
+  );
 
-      scrollTriggerRef.current = st;
-    }, containerRef);
+  // Controlled Desktop Scroll & Gesture Engine
+  useEffect(() => {
+    // Only active on desktop/laptop viewports
+    if (typeof window === 'undefined' || window.innerWidth < 768) return;
+
+    const WHEEL_THRESHOLD = 20; // Required delta before advancing (filters out micro-trackpad jitter)
+
+    const handleWheel = (e: WheelEvent) => {
+      const scrollY = window.scrollY;
+      const currentStage = currentStageRef.current;
+
+      // ── CASE 1: SCROLL DOWN (e.deltaY > 0) ──
+      if (e.deltaY > 0) {
+        // While at the hero (scrollY <= 15) and NOT yet at the final stage (currentStage < 4):
+        if (scrollY <= 15 && currentStage < 4) {
+          e.preventDefault(); // Lock page scroll, control animation
+
+          if (isAnimatingRef.current) {
+            // Actively transitioning: ignore additional wheel events
+            return;
+          }
+
+          wheelAccumulatorRef.current += e.deltaY;
+          if (wheelAccumulatorRef.current >= WHEEL_THRESHOLD) {
+            wheelAccumulatorRef.current = 0;
+            animateToStage(currentStage + 1);
+          }
+          return;
+        }
+
+        // When at Stage 4 (Frame 122) and user scrolls down:
+        // DO NOT call e.preventDefault()!
+        // Release hero section: browser and Lenis naturally scroll into the next page section!
+        if (currentStage === 4) {
+          wheelAccumulatorRef.current = 0;
+          return;
+        }
+      }
+
+      // ── CASE 2: SCROLL UP (e.deltaY < 0) ──
+      if (e.deltaY < 0) {
+        // If user is currently down in the rest of the website (scrollY > 15):
+        // Allow normal upward scrolling towards the top!
+        if (scrollY > 15) {
+          wheelAccumulatorRef.current = 0;
+          return;
+        }
+
+        // If user is at the top of the page (scrollY <= 15) and hero can step backward (currentStage > 0):
+        if (currentStage > 0) {
+          e.preventDefault(); // Intercept upward scroll to reverse animation
+
+          if (isAnimatingRef.current) {
+            return;
+          }
+
+          // Inertia grace period: if user just reached top from below, require intentional pause
+          if (Date.now() - reachedTopTimeRef.current < 220) {
+            return;
+          }
+
+          wheelAccumulatorRef.current += e.deltaY;
+          if (wheelAccumulatorRef.current <= -WHEEL_THRESHOLD) {
+            wheelAccumulatorRef.current = 0;
+            if (window.scrollY > 0) {
+              window.scrollTo({ top: 0, behavior: 'instant' });
+            }
+            animateToStage(currentStage - 1);
+          }
+          return;
+        }
+
+        // At Stage 0 and top of page: normal boundary behavior
+        wheelAccumulatorRef.current = 0;
+      }
+    };
+
+    // Track when user scrolls back up to top to absorb residual momentum
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      if (scrollY <= 15 && lastScrollYRef.current > 15) {
+        reachedTopTimeRef.current = Date.now();
+        wheelAccumulatorRef.current = 0;
+      }
+      lastScrollYRef.current = scrollY;
+    };
+
+    // Keyboard navigation (ArrowDown / ArrowUp)
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (window.scrollY > 15) return;
+
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        if (currentStageRef.current < 4) {
+          e.preventDefault();
+          if (!isAnimatingRef.current) {
+            animateToStage(currentStageRef.current + 1);
+          }
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        if (currentStageRef.current > 0) {
+          e.preventDefault();
+          if (!isAnimatingRef.current) {
+            animateToStage(currentStageRef.current - 1);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      ctx.revert();
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [drawFrame]);
+  }, [animateToStage]);
 
+  // Jump directly to a specific milestone (e.g. via navigation dots)
   const goToStep = (stepIdx: number) => {
-    if (!scrollTriggerRef.current) return;
-    const st = scrollTriggerRef.current;
-    lastMilestoneRef.current = stepIdx;
-    const targetProgress = MILESTONES[stepIdx];
-    const targetScroll = st.start + (st.end - st.start) * targetProgress;
-    window.scrollTo({
-      top: targetScroll,
-      behavior: 'smooth',
-    });
+    if (stepIdx === currentStageRef.current || isAnimatingRef.current) return;
+    animateToStage(stepIdx);
   };
 
+  // Skip animation button: jump to frame 122 and scroll into main website
   const handleSkipToContent = () => {
-    if (!scrollTriggerRef.current) return;
-    const st = scrollTriggerRef.current;
-    window.scrollTo({
-      top: st.end + 20,
-      behavior: 'smooth',
-    });
+    gsap.killTweensOf(animRef.current);
+    currentStageRef.current = 4;
+    setActiveStep(4);
+    currentFrameRef.current = 122;
+    animRef.current.frame = 122;
+    drawFrame(122);
+    isAnimatingRef.current = false;
+
+    const nextSection = containerRef.current?.nextElementSibling as HTMLElement;
+    if (nextSection) {
+      nextSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+    }
   };
 
   const currentProduct = PRODUCT_STEPS[activeStep];
 
   return (
-    <section ref={containerRef} className="relative w-full bg-[#f4f2ee] select-none">
-      {/* Sticky Pinned Viewport Container (100vh) */}
-      <div ref={pinRef} className="relative w-full h-screen overflow-hidden">
+    <section ref={containerRef} className="relative w-full h-screen bg-[#f4f2ee] select-none overflow-hidden">
+      {/* Viewport Container (100vh) */}
+      <div className="relative w-full h-full overflow-hidden">
         {/* Hardware-Accelerated 3D Product Canvas */}
         <canvas
           ref={canvasRef}
@@ -423,7 +482,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           )}
         </div>
 
-        {/* Main Product Story Card Overlay (Bottom-Left Positioned for Full Product Visibility) */}
+        {/* Main Product Story Card Overlay (Bottom-Left Positioned for 100% Unobstructed Product Visibility) */}
         <div className="absolute bottom-6 sm:bottom-8 left-4 sm:left-8 lg:left-12 z-20 pointer-events-none max-w-md lg:max-w-lg w-[calc(100%-2rem)] sm:w-auto">
           <div className="w-full pointer-events-auto transition-all duration-300 transform translate-y-0">
             <div className="bg-white/95 sm:bg-white/90 backdrop-blur-xl border border-charcoal-200/90 shadow-2xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-3">
@@ -516,10 +575,12 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           })}
         </div>
 
-        {/* Bottom Scroll Prompt (Clean - Removed 1 scroll = 1 product text) */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden md:flex items-center gap-2 bg-white/85 backdrop-blur-md px-4 py-1.5 rounded-full border border-charcoal-200/70 shadow-xs pointer-events-none text-charcoal-700">
+        {/* Dynamic Bottom Scroll Prompt */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden md:flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-charcoal-200/80 shadow-xs pointer-events-none text-charcoal-800 transition-all duration-300">
           <span className="text-xs font-bold tracking-wide">
-            Scroll down to advance sequence
+            {activeStep < 4
+              ? `Scroll down for next product (${activeStep + 1}/5)`
+              : 'Scroll down to explore website'}
           </span>
           <ArrowDown className="w-3.5 h-3.5 text-brand-600 animate-bounce" />
         </div>
