@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { gsap } from '../../lib/gsap';
+import { gsap, ScrollTrigger } from '../../lib/gsap';
 import { ArrowDown, ChevronRight, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useSmoothScroll } from '../common/SmoothScrollProvider';
 
@@ -111,6 +111,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
   const currentStageRef = useRef<number>(0);
   const isAnimatingRef = useRef<boolean>(false);
   const wheelAccumulatorRef = useRef<number>(0);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   const [activeStep, setActiveStep] = useState<number>(0);
   const [loadProgress, setLoadProgress] = useState<number>(0);
@@ -261,10 +262,12 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
       if (targetStage < 0 || targetStage >= STAGE_FRAMES.length) return;
       if (isAnimatingRef.current) return;
 
+      const st = scrollTriggerRef.current;
       const fromFrame = currentFrameRef.current;
       const toFrame = STAGE_FRAMES[targetStage];
       const vh = window.innerHeight;
-      const targetScrollY = targetStage * vh;
+      const startPos = st ? st.start : 0;
+      const targetScrollY = startPos + targetStage * vh;
 
       // Lock triggers while transition runs
       isAnimatingRef.current = true;
@@ -275,7 +278,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
       const stepDistance = Math.abs(targetStage - (PRODUCT_STEPS.find((p) => p.frame === fromFrame)?.stepIndex ?? 0));
       const duration = Math.max(0.65, Math.min(0.65 + (stepDistance - 1) * 0.15, 0.95));
 
-      // 1. Smoothly scroll the page to this stage's sticky offset
+      // 1. Smoothly scroll the page to this stage's pinned offset
       if (lenis) {
         lenis.scrollTo(targetScrollY, {
           duration: duration,
@@ -314,6 +317,51 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     [drawFrame, lenis]
   );
 
+  // Setup GSAP ScrollTrigger Pinning for 100% Guaranteed Sticky Viewport on Desktop
+  useEffect(() => {
+    const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
+    if (!isDesktop || !containerRef.current || !pinRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const st = ScrollTrigger.create({
+        trigger: containerRef.current,
+        pin: pinRef.current,
+        start: 'top top',
+        end: () => `+=${window.innerHeight * 4}`,
+        pinSpacing: true,
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          // Keep stage in sync if user manually moves scrollbar
+          if (!isAnimatingRef.current) {
+            const p = self.progress;
+            let stage = 0;
+            if (p >= 0.875) stage = 4;
+            else if (p >= 0.625) stage = 3;
+            else if (p >= 0.375) stage = 2;
+            else if (p >= 0.125) stage = 1;
+            else stage = 0;
+
+            if (stage !== currentStageRef.current) {
+              currentStageRef.current = stage;
+              setActiveStep(stage);
+              const targetFrame = STAGE_FRAMES[stage];
+              currentFrameRef.current = targetFrame;
+              animRef.current.frame = targetFrame;
+              drawFrame(targetFrame);
+            }
+          }
+        },
+      });
+
+      scrollTriggerRef.current = st;
+    }, containerRef);
+
+    return () => {
+      ctx.revert();
+      scrollTriggerRef.current = null;
+    };
+  }, [drawFrame]);
+
   // Controlled Desktop Scroll & Gesture Engine
   useEffect(() => {
     const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
@@ -322,13 +370,15 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     const WHEEL_THRESHOLD = 18;
 
     const handleWheel = (e: WheelEvent) => {
+      const st = scrollTriggerRef.current;
       const scrollY = window.scrollY;
       const vh = window.innerHeight;
-      const heroMaxScroll = 4 * vh; // Offset for Product 5 (Stage 4)
+      const startPos = st ? st.start : 0;
+      const heroMaxScroll = startPos + 4 * vh; // Offset for Product 5 (Stage 4)
 
       // ── CASE 1: SCROLL DOWN (e.deltaY > 0) ──
       if (e.deltaY > 0) {
-        // While within the hero sticky range (before the final product at Stage 4):
+        // While within the hero pinned range (before the final product at Stage 4):
         if (scrollY < heroMaxScroll - 20) {
           e.preventDefault(); // Intercept raw scroll, execute clean 1-product transition
 
@@ -346,7 +396,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         // At Stage 4 (scrollY >= heroMaxScroll - 20):
         // All 5 products have now been shown!
         // DO NOT call e.preventDefault()!
-        // The hero container naturally releases and page scrolls down to the next section!
+        // ScrollTrigger reaches 'end', unpins the element, and page scrolls down to the next section!
         return;
       }
 
@@ -358,8 +408,8 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           return;
         }
 
-        // If user is at or entering the hero sticky section:
-        if (currentStageRef.current > 0) {
+        // If user is at or entering the hero pinned section:
+        if (currentStageRef.current > 0 && scrollY <= heroMaxScroll + 20) {
           e.preventDefault();
 
           if (isAnimatingRef.current) return;
@@ -375,30 +425,12 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
       }
     };
 
-    // Scroll listener: keep stage and frame in sync if user uses scrollbar or touch
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight;
-
-      // If user is inside the hero range and not currently in a programmatic animation:
-      if (!isAnimatingRef.current && scrollY <= 4 * vh + 10) {
-        const rawStage = Math.round(scrollY / vh);
-        const stage = Math.max(0, Math.min(4, rawStage));
-        if (stage !== currentStageRef.current) {
-          currentStageRef.current = stage;
-          setActiveStep(stage);
-          const targetFrame = STAGE_FRAMES[stage];
-          currentFrameRef.current = targetFrame;
-          animRef.current.frame = targetFrame;
-          drawFrame(targetFrame);
-        }
-      }
-    };
-
     // Keyboard navigation (ArrowDown / ArrowUp)
     const handleKeyDown = (e: KeyboardEvent) => {
+      const st = scrollTriggerRef.current;
       const vh = window.innerHeight;
-      if (window.scrollY > 4 * vh + 20) return;
+      const maxScroll = st ? st.end : 4 * vh;
+      if (window.scrollY > maxScroll + 20) return;
 
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
         if (currentStageRef.current < 4) {
@@ -418,15 +450,13 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     };
 
     window.addEventListener('wheel', handleWheel, { passive: false });
-    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener('wheel', handleWheel);
-      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [transitionToStage, drawFrame]);
+  }, [transitionToStage]);
 
   // Jump directly to a specific milestone (e.g. via navigation dots)
   const goToStep = (stepIdx: number) => {
@@ -444,8 +474,9 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     drawFrame(122);
     isAnimatingRef.current = false;
 
+    const st = scrollTriggerRef.current;
     const vh = window.innerHeight;
-    const targetScrollY = 5 * vh;
+    const targetScrollY = (st ? st.end : 4 * vh) + 20;
 
     if (lenis) {
       lenis.scrollTo(targetScrollY, { duration: 0.9 });
@@ -457,16 +488,14 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
   const currentProduct = PRODUCT_STEPS[activeStep];
 
   return (
-    // Desktop: h-[500vh] provides 400vh of sticky travel distance for all 5 products
-    // Mobile: h-screen maintains single-screen layout
     <section
       ref={containerRef}
-      className="relative w-full h-screen md:h-[500vh] bg-[#f4f2ee] select-none"
+      className="relative w-full bg-[#f4f2ee] select-none"
     >
-      {/* 100% Guaranteed Sticky Viewport (100vh): Stays glued at top: 0 throughout all 5 products */}
+      {/* 100% Guaranteed Pinned Viewport (100vh): Locked by GSAP ScrollTrigger throughout all 5 products */}
       <div
         ref={pinRef}
-        className="sticky top-0 w-full h-screen overflow-hidden"
+        className="relative w-full h-screen overflow-hidden"
       >
         {/* Hardware-Accelerated 3D Product Canvas */}
         <canvas

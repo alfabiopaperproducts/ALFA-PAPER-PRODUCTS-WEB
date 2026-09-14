@@ -87,7 +87,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
   };
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-x-clip">
       <SeoHead
         title="Sustainable Paper Products Manufacturer in Kerala | ALFA PAPER PRODUCTS"
         description="Manufacturers of biodegradable, compostable and plastic-free paper products since 1985. Food-grade plates, cups, trays, burger boxes, and bakery packaging in Tirur, Kerala."
