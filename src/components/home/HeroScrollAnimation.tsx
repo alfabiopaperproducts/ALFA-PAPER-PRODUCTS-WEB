@@ -182,8 +182,9 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     [findNearestImage]
   );
 
-  // 3-Tier Progressive Preloading Architecture
+  // 3-Tier Progressive Preloading Architecture (Desktop only)
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
     let isCancelled = false;
     let loadedCount = 0;
 
@@ -267,8 +268,9 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
   }, [drawFrame]);
 
   // Setup GSAP ScrollTrigger with Stepped Snap
-  // Setup GSAP ScrollTrigger with Directional Auto-Scroll Snap
+  // Setup GSAP ScrollTrigger with Directional Auto-Scroll Snap (Desktop only)
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
     if (!containerRef.current || !pinRef.current) return;
 
     const ctx = gsap.context(() => {
@@ -388,7 +390,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
   const currentProduct = PRODUCT_STEPS[activeStep];
 
   return (
-    <section ref={containerRef} className="relative w-full bg-[#f4f2ee] select-none">
+    <section ref={containerRef} className="relative w-full bg-[#f4f2ee] select-none hidden md:block">
       {/* Sticky Pinned Viewport Container (100vh) */}
       <div ref={pinRef} className="relative w-full h-screen overflow-hidden">
         {/* Hardware-Accelerated 3D Product Canvas */}

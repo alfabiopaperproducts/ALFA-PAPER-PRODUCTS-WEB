@@ -32,6 +32,7 @@ import heroImg from '../assets/hero-sustainable-paper.jpg';
 import factoryImg from '../assets/factory-paper-production.jpg';
 import sustainabilityBg from '../assets/sustainability-bg.png';
 import { HeroScrollAnimation } from '../components/home/HeroScrollAnimation';
+import { MobileHero3D } from '../components/home/MobileHero3D';
 
 interface HomeProps {
   onOpenQuoteModal: (productName?: string) => void;
@@ -94,7 +95,10 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
         schema={generateOrganizationSchema()}
       />
 
-      {/* 0. 3D STEPPED SCROLL PRODUCT SHOWCASE */}
+      {/* 0A. DEDICATED 3D MOBILE HERO (Real-Time Three.js GLB Models) */}
+      <MobileHero3D onOpenQuoteModal={onOpenQuoteModal} />
+
+      {/* 0B. 3D STEPPED SCROLL SHOWCASE (Desktop & Tablet) */}
       <HeroScrollAnimation onOpenQuoteModal={onOpenQuoteModal} />
 
       {/* 1. HERO SECTION */}
