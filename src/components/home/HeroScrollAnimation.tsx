@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from '../../lib/gsap';
 import { ArrowDown, ChevronRight, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
+import { useSmoothScroll } from '../common/SmoothScrollProvider';
 
 interface HeroScrollAnimationProps {
   onOpenQuoteModal?: (productName?: string) => void;
@@ -98,18 +99,22 @@ const getFrameUrl = (index: number) => {
 export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpenQuoteModal }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { lenis } = useSmoothScroll();
 
-  // Store preloaded images in a ref to avoid React state re-renders during animation
+  // Preloaded image references
   const imagesRef = useRef<(HTMLImageElement | null)[]>(new Array(TOTAL_FRAMES).fill(null));
   const currentFrameRef = useRef<number>(0);
   const animRef = useRef<{ frame: number }>({ frame: 0 });
 
-  // Controlled stage state machine (0, 1, 2, 3, 4)
+  // Controlled stage state machine (0 to 4)
   const currentStageRef = useRef<number>(0);
   const isAnimatingRef = useRef<boolean>(false);
   const wheelAccumulatorRef = useRef<number>(0);
   const reachedTopTimeRef = useRef<number>(0);
   const lastScrollYRef = useRef<number>(0);
+
+  // Strict completion flag: ONLY true when user has completed all 5 stages (Frame 122)
+  const hasCompletedAllStagesRef = useRef<boolean>(false);
 
   const [activeStep, setActiveStep] = useState<number>(0);
   const [loadProgress, setLoadProgress] = useState<number>(0);
@@ -256,13 +261,16 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
 
   // Smooth Interpolated Transition to Target Stage
   const animateToStage = useCallback(
-    (targetStage: number) => {
+    (targetStage: number, onCompleteCallback?: () => void) => {
       if (targetStage < 0 || targetStage >= STAGE_FRAMES.length) return;
       if (isAnimatingRef.current) return;
 
       const fromFrame = currentFrameRef.current;
       const toFrame = STAGE_FRAMES[targetStage];
-      if (fromFrame === toFrame) return;
+      if (fromFrame === toFrame) {
+        onCompleteCallback?.();
+        return;
+      }
 
       // Lock scroll triggers while transition runs
       isAnimatingRef.current = true;
@@ -290,11 +298,13 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           animRef.current.frame = toFrame;
           drawFrame(toFrame);
 
+          onCompleteCallback?.();
+
           // Cooldown lock to absorb trackpad momentum and prevent accidental multi-stage skips
           setTimeout(() => {
             isAnimatingRef.current = false;
             wheelAccumulatorRef.current = 0;
-          }, 200);
+          }, 220);
         },
       });
     },
@@ -304,77 +314,106 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
   // Controlled Desktop Scroll & Gesture Engine
   useEffect(() => {
     // Only active on desktop/laptop viewports
-    if (typeof window === 'undefined' || window.innerWidth < 768) return;
+    const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
+    if (!isDesktop) return;
 
-    const WHEEL_THRESHOLD = 20; // Required delta before advancing (filters out micro-trackpad jitter)
+    // Initially lock the hero at the top until all 5 stages complete
+    if (window.scrollY <= 10 && !hasCompletedAllStagesRef.current) {
+      lenis?.stop();
+      window.scrollTo(0, 0);
+    }
+
+    const WHEEL_THRESHOLD = 18; // Required delta before advancing (filters micro-trackpad jitter)
 
     const handleWheel = (e: WheelEvent) => {
-      const scrollY = window.scrollY;
-      const currentStage = currentStageRef.current;
-
       // ── CASE 1: SCROLL DOWN (e.deltaY > 0) ──
       if (e.deltaY > 0) {
-        // While at the hero (scrollY <= 15) and NOT yet at the final stage (currentStage < 4):
-        if (scrollY <= 15 && currentStage < 4) {
-          e.preventDefault(); // Lock page scroll, control animation
+        // As long as all 5 stages are NOT yet completed, hero intercepts ALL downward scrolls:
+        if (!hasCompletedAllStagesRef.current) {
+          e.preventDefault();
+          if (window.scrollY !== 0) {
+            window.scrollTo(0, 0);
+          }
 
           if (isAnimatingRef.current) {
-            // Actively transitioning: ignore additional wheel events
+            // Actively transitioning: ignore extra wheel pulses
             return;
           }
 
           wheelAccumulatorRef.current += e.deltaY;
           if (wheelAccumulatorRef.current >= WHEEL_THRESHOLD) {
             wheelAccumulatorRef.current = 0;
-            animateToStage(currentStage + 1);
+            const nextStage = currentStageRef.current + 1;
+
+            if (nextStage < 4) {
+              // Steps: 0 -> 1 (Boxes), 1 -> 2 (Tubs), 2 -> 3 (Plates)
+              animateToStage(nextStage);
+            } else if (nextStage === 4) {
+              // 4th Scroll: 3 -> 4 (Bakery Boxes, Frame 122)
+              animateToStage(4, () => {
+                // ALL 5 PRODUCTS HAVE NOW BEEN SHOWN!
+                hasCompletedAllStagesRef.current = true;
+                lenis?.start();
+              });
+            }
           }
           return;
         }
 
-        // When at Stage 4 (Frame 122) and user scrolls down:
-        // DO NOT call e.preventDefault()!
-        // Release hero section: browser and Lenis naturally scroll into the next page section!
-        if (currentStage === 4) {
-          wheelAccumulatorRef.current = 0;
-          return;
-        }
+        // When hasCompletedAllStagesRef.current is true:
+        // All 5 products have been fully presented!
+        // User scrolls down: DO NOT call e.preventDefault()!
+        // Normal page scrolling continues down into the rest of the website!
+        lenis?.start();
+        return;
       }
 
       // ── CASE 2: SCROLL UP (e.deltaY < 0) ──
       if (e.deltaY < 0) {
-        // If user is currently down in the rest of the website (scrollY > 15):
-        // Allow normal upward scrolling towards the top!
-        if (scrollY > 15) {
-          wheelAccumulatorRef.current = 0;
-          return;
-        }
-
-        // If user is at the top of the page (scrollY <= 15) and hero can step backward (currentStage > 0):
-        if (currentStage > 0) {
-          e.preventDefault(); // Intercept upward scroll to reverse animation
-
-          if (isAnimatingRef.current) {
+        if (hasCompletedAllStagesRef.current) {
+          // If user is currently down in the rest of the website (scrollY > 15):
+          // Allow normal upward scrolling towards the top!
+          if (window.scrollY > 15) {
             return;
           }
 
-          // Inertia grace period: if user just reached top from below, require intentional pause
-          if (Date.now() - reachedTopTimeRef.current < 220) {
+          // User has scrolled all the way back to the top of the page (scrollY <= 15)
+          // Grace period to absorb upward scrolling momentum before reversing
+          if (Date.now() - reachedTopTimeRef.current < 250) {
             return;
           }
 
+          e.preventDefault();
           wheelAccumulatorRef.current += e.deltaY;
           if (wheelAccumulatorRef.current <= -WHEEL_THRESHOLD) {
             wheelAccumulatorRef.current = 0;
-            if (window.scrollY > 0) {
-              window.scrollTo({ top: 0, behavior: 'instant' });
-            }
-            animateToStage(currentStage - 1);
+            hasCompletedAllStagesRef.current = false;
+            lenis?.stop();
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            animateToStage(3); // Reverse back to Product 4 (Plates, Frame 91)
           }
           return;
         }
 
-        // At Stage 0 and top of page: normal boundary behavior
-        wheelAccumulatorRef.current = 0;
+        // When hasCompletedAllStagesRef.current is false:
+        // Hero is locked at top!
+        e.preventDefault();
+        if (window.scrollY !== 0) {
+          window.scrollTo(0, 0);
+        }
+
+        if (isAnimatingRef.current) {
+          return;
+        }
+
+        if (currentStageRef.current > 0) {
+          wheelAccumulatorRef.current += e.deltaY;
+          if (wheelAccumulatorRef.current <= -WHEEL_THRESHOLD) {
+            wheelAccumulatorRef.current = 0;
+            animateToStage(currentStageRef.current - 1);
+          }
+        }
+        return;
       }
     };
 
@@ -390,19 +429,29 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
 
     // Keyboard navigation (ArrowDown / ArrowUp)
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (window.scrollY > 15) return;
+      if (hasCompletedAllStagesRef.current && window.scrollY > 15) return;
 
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-        if (currentStageRef.current < 4) {
+        if (!hasCompletedAllStagesRef.current) {
           e.preventDefault();
           if (!isAnimatingRef.current) {
-            animateToStage(currentStageRef.current + 1);
+            const next = currentStageRef.current + 1;
+            if (next < 4) {
+              animateToStage(next);
+            } else if (next === 4) {
+              animateToStage(4, () => {
+                hasCompletedAllStagesRef.current = true;
+                lenis?.start();
+              });
+            }
           }
         }
       } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-        if (currentStageRef.current > 0) {
+        if (window.scrollY <= 15 && currentStageRef.current > 0) {
           e.preventDefault();
           if (!isAnimatingRef.current) {
+            hasCompletedAllStagesRef.current = false;
+            lenis?.stop();
             animateToStage(currentStageRef.current - 1);
           }
         }
@@ -414,19 +463,29 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      lenis?.start();
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [animateToStage]);
+  }, [animateToStage, lenis]);
 
   // Jump directly to a specific milestone (e.g. via navigation dots)
   const goToStep = (stepIdx: number) => {
     if (stepIdx === currentStageRef.current || isAnimatingRef.current) return;
-    animateToStage(stepIdx);
+    if (stepIdx === 4) {
+      animateToStage(4, () => {
+        hasCompletedAllStagesRef.current = true;
+        lenis?.start();
+      });
+    } else {
+      hasCompletedAllStagesRef.current = false;
+      lenis?.stop();
+      animateToStage(stepIdx);
+    }
   };
 
-  // Skip animation button: jump to frame 122 and scroll into main website
+  // Skip animation button: jump directly to Frame 122 and scroll into main website
   const handleSkipToContent = () => {
     gsap.killTweensOf(animRef.current);
     currentStageRef.current = 4;
@@ -435,10 +494,12 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     animRef.current.frame = 122;
     drawFrame(122);
     isAnimatingRef.current = false;
+    hasCompletedAllStagesRef.current = true;
+    lenis?.start();
 
-    const nextSection = containerRef.current?.nextElementSibling as HTMLElement;
-    if (nextSection) {
-      nextSection.scrollIntoView({ behavior: 'smooth' });
+    const heroSection = document.getElementById('hero-section');
+    if (heroSection) {
+      heroSection.scrollIntoView({ behavior: 'smooth' });
     } else {
       window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
     }
