@@ -22,7 +22,6 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           gsap: ['gsap'],
-          three: ['three'],
           motion: ['motion'],
           lucide: ['lucide-react'],
         },
