@@ -346,25 +346,22 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
     if (!isDesktop) return;
 
-    const WHEEL_THRESHOLD = 22; // Required delta before advancing
+    const WHEEL_THRESHOLD = 18; // Required delta before advancing (1 single notch triggers)
     let wheelResetTimer: ReturnType<typeof setTimeout> | null = null;
     let lastDirection = 0; // 1 = down, -1 = up
     let lastDirectionTime = 0;
 
     const handleWheel = (e: WheelEvent) => {
-      const st = scrollTriggerRef.current;
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight;
-      const startPos = st ? st.start : 0;
-      const heroMaxScroll = startPos + 4 * vh; // Offset for Product 5 (Stage 4)
+      const heroSection = document.getElementById('hero-section');
+      const heroRect = heroSection ? heroSection.getBoundingClientRect() : null;
 
       const currentDir = e.deltaY > 0 ? 1 : -1;
 
-      // Trackpad Rebound Guard (350ms deadzone)
+      // Trackpad Rebound Guard (350ms deadzone on direction flip)
       if (lastDirection !== 0 && currentDir !== lastDirection) {
         const timeSinceFlip = Date.now() - lastDirectionTime;
         if (timeSinceFlip < 350) {
-          if (scrollY < heroMaxScroll + 100) {
+          if (heroRect && heroRect.top > 20) {
             e.preventDefault();
           }
           return;
@@ -376,7 +373,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         lastDirection = 1;
         lastDirectionTime = Date.now();
 
-        // While at Product 1 to 4 (stages 0, 1, 2, 3): Advance 1 product
+        // While at Product 1 to 4 (stages 0, 1, 2, 3): Advance 1 product per scroll
         if (currentStageRef.current < 4) {
           e.preventDefault();
 
@@ -396,11 +393,9 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         }
 
         // At Product 5 (Stage 4): The animation has finished!
-        // Immediately smoothly scroll down to the next section on ONE single scroll!
-        const heroSection = document.getElementById('hero-section');
-        const nextSectionTop = heroSection ? heroSection.offsetTop : (st ? st.end : 4 * vh) + 60;
-
-        if (scrollY < nextSectionTop - 30) {
+        // If the next section is still below the viewport (hero is showing):
+        // IMMEDIATELY smoothly scroll down to the next section on ONE single scroll gesture!
+        if (heroRect && heroRect.top > 20) {
           e.preventDefault();
 
           if (isAnimatingRef.current) return;
@@ -415,18 +410,18 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
             wheelAccumulatorRef.current = 0;
             isAnimatingRef.current = true;
 
-            if (lenis) {
-              lenis.scrollTo(nextSectionTop, {
+            if (lenis && heroSection) {
+              lenis.scrollTo(heroSection, {
                 duration: 0.85,
                 easing: (t: number) => 1 - Math.pow(1 - t, 3),
                 onComplete: () => {
                   setTimeout(() => {
                     isAnimatingRef.current = false;
-                  }, 250);
+                  }, 200);
                 },
               });
-            } else {
-              window.scrollTo({ top: nextSectionTop, behavior: 'smooth' });
+            } else if (heroSection) {
+              heroSection.scrollIntoView({ behavior: 'smooth' });
               setTimeout(() => {
                 isAnimatingRef.current = false;
               }, 850);
@@ -435,7 +430,8 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           return;
         }
 
-        // Already at/past the next section: normal page scroll continues
+        // Already at or past the next section (heroRect.top <= 20):
+        // Allow normal, unhindered page scroll down into the rest of the website!
         return;
       }
 
@@ -444,17 +440,15 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         lastDirection = -1;
         lastDirectionTime = Date.now();
 
-        const heroSection = document.getElementById('hero-section');
-        const nextSectionTop = heroSection ? heroSection.offsetTop : (st ? st.end : 4 * vh) + 60;
-
-        // If user is deep down in the website below hero:
-        if (scrollY > nextSectionTop + 50) {
-          // Allow normal upward scrolling back towards the hero
+        // If user is deep down in the website below hero (more than 80px past top of hero-section):
+        if (heroRect && heroRect.top < -80) {
+          // Allow normal upward scrolling through the website
           return;
         }
 
-        // If user is at or near the top of the next section, scroll UP immediately snaps back into Product 5:
-        if (scrollY >= heroMaxScroll - 10 && scrollY <= nextSectionTop + 50) {
+        // If user is at or near the top of hero-section and scrolls up:
+        // Immediately smoothly scroll back into Product 5 (Stage 4) on ONE scroll!
+        if (heroRect && heroRect.top >= -80 && heroRect.top <= 80) {
           e.preventDefault();
 
           if (isAnimatingRef.current) return;
@@ -496,12 +490,8 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
 
     // Keyboard navigation (ArrowDown / ArrowUp)
     const handleKeyDown = (e: KeyboardEvent) => {
-      const st = scrollTriggerRef.current;
-      const vh = window.innerHeight;
       const heroSection = document.getElementById('hero-section');
-      const nextSectionTop = heroSection ? heroSection.offsetTop : (st ? st.end : 4 * vh) + 60;
-
-      if (window.scrollY > nextSectionTop + 50) return;
+      const heroRect = heroSection?.getBoundingClientRect();
 
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
         if (currentStageRef.current < 4) {
@@ -509,15 +499,15 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           if (!isAnimatingRef.current) {
             transitionToStage(currentStageRef.current + 1);
           }
-        } else if (currentStageRef.current === 4 && window.scrollY < nextSectionTop - 30) {
+        } else if (currentStageRef.current === 4 && heroRect && heroRect.top > 20) {
           e.preventDefault();
           if (!isAnimatingRef.current) {
-            if (lenis) lenis.scrollTo(nextSectionTop, { duration: 0.85 });
-            else window.scrollTo({ top: nextSectionTop, behavior: 'smooth' });
+            if (lenis && heroSection) lenis.scrollTo(heroSection, { duration: 0.85 });
+            else heroSection?.scrollIntoView({ behavior: 'smooth' });
           }
         }
       } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-        if (currentStageRef.current > 0) {
+        if (currentStageRef.current > 0 && (!heroRect || heroRect.top >= -80)) {
           e.preventDefault();
           if (!isAnimatingRef.current) {
             transitionToStage(currentStageRef.current - 1);
@@ -534,7 +524,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [transitionToStage]);
+  }, [transitionToStage, lenis]);
 
   // Jump directly to a specific milestone (e.g. via navigation dots)
   const goToStep = (stepIdx: number) => {
@@ -553,14 +543,12 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     isAnimatingRef.current = false;
 
     const heroSection = document.getElementById('hero-section');
-    const st = scrollTriggerRef.current;
-    const vh = window.innerHeight;
-    const targetScrollY = heroSection ? heroSection.offsetTop : (st ? st.end : 4 * vh) + 60;
-
-    if (lenis) {
-      lenis.scrollTo(targetScrollY, { duration: 0.85 });
-    } else {
-      window.scrollTo({ top: targetScrollY, behavior: 'smooth' });
+    if (heroSection) {
+      if (lenis) {
+        lenis.scrollTo(heroSection, { duration: 0.85 });
+      } else {
+        heroSection.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
