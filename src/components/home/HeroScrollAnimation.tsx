@@ -107,7 +107,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
   const currentFrameRef = useRef<number>(0);
   const animRef = useRef<{ frame: number }>({ frame: 0 });
 
-  // Controlled stage state machine (0 to 4)
+  // Controlled stage state machine (0 to 4) - SINGLE SOURCE OF TRUTH
   const currentStageRef = useRef<number>(0);
   const isAnimatingRef = useRef<boolean>(false);
   const wheelAccumulatorRef = useRef<number>(0);
@@ -256,7 +256,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     };
   }, [drawFrame]);
 
-  // Smooth Transition to Target Stage: animates both canvas frames and scroll position
+  // Smooth Transition to Target Stage: Controlled Programmatic Transition
   const transitionToStage = useCallback(
     (targetStage: number) => {
       if (targetStage < 0 || targetStage >= STAGE_FRAMES.length) return;
@@ -274,9 +274,9 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
       currentStageRef.current = targetStage;
       setActiveStep(targetStage);
 
-      // Duration: 0.7s per step
+      // Duration: 0.65s to 0.85s per step
       const stepDistance = Math.abs(targetStage - (PRODUCT_STEPS.find((p) => p.frame === fromFrame)?.stepIndex ?? 0));
-      const duration = Math.max(0.65, Math.min(0.65 + (stepDistance - 1) * 0.15, 0.95));
+      const duration = Math.max(0.65, Math.min(0.65 + (stepDistance - 1) * 0.15, 0.85));
 
       // 1. Smoothly scroll the page to this stage's pinned offset
       if (lenis) {
@@ -306,18 +306,19 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           animRef.current.frame = toFrame;
           drawFrame(toFrame);
 
-          // Cooldown lock to absorb trackpad momentum
+          // Generous 300ms cooldown: ensures Lenis has 100% settled at targetScrollY
+          // and any residual trackpad momentum is completely dead before unlocking
           setTimeout(() => {
             isAnimatingRef.current = false;
             wheelAccumulatorRef.current = 0;
-          }, 200);
+          }, 300);
         },
       });
     },
     [drawFrame, lenis]
   );
 
-  // Setup GSAP ScrollTrigger Pinning for 100% Guaranteed Sticky Viewport on Desktop
+  // Setup GSAP ScrollTrigger Pinning exclusively for viewport lock (NO onUpdate frame hijacking)
   useEffect(() => {
     const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
     if (!isDesktop || !containerRef.current || !pinRef.current) return;
@@ -330,27 +331,8 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         end: () => `+=${window.innerHeight * 4}`,
         pinSpacing: true,
         anticipatePin: 1,
-        onUpdate: (self) => {
-          // Keep stage in sync if user manually moves scrollbar
-          if (!isAnimatingRef.current) {
-            const p = self.progress;
-            let stage = 0;
-            if (p >= 0.875) stage = 4;
-            else if (p >= 0.625) stage = 3;
-            else if (p >= 0.375) stage = 2;
-            else if (p >= 0.125) stage = 1;
-            else stage = 0;
-
-            if (stage !== currentStageRef.current) {
-              currentStageRef.current = stage;
-              setActiveStep(stage);
-              const targetFrame = STAGE_FRAMES[stage];
-              currentFrameRef.current = targetFrame;
-              animRef.current.frame = targetFrame;
-              drawFrame(targetFrame);
-            }
-          }
-        },
+        // Notice: NO onUpdate here! The state machine alone controls the frames and stages.
+        // This completely prevents background scroll progress from ever snapping back automatically.
       });
 
       scrollTriggerRef.current = st;
@@ -360,14 +342,17 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
       ctx.revert();
       scrollTriggerRef.current = null;
     };
-  }, [drawFrame]);
+  }, []);
 
-  // Controlled Desktop Scroll & Gesture Engine
+  // Controlled Desktop Scroll & Gesture Engine with Anti-Rebound Guard
   useEffect(() => {
     const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
     if (!isDesktop) return;
 
-    const WHEEL_THRESHOLD = 18;
+    const WHEEL_THRESHOLD = 25; // Required delta before advancing (filters micro-jitter)
+    let wheelResetTimer: ReturnType<typeof setTimeout> | null = null;
+    let lastDirection = 0; // 1 = down, -1 = up
+    let lastDirectionTime = 0;
 
     const handleWheel = (e: WheelEvent) => {
       const st = scrollTriggerRef.current;
@@ -376,19 +361,45 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
       const startPos = st ? st.start : 0;
       const heroMaxScroll = startPos + 4 * vh; // Offset for Product 5 (Stage 4)
 
+      const currentDir = e.deltaY > 0 ? 1 : -1;
+
+      // Trackpad Rebound Guard:
+      // When lifting fingers from a trackpad, a momentary counter-scroll pulse occurs.
+      // If direction flipped within 350ms of the previous scroll, swallow the rebound!
+      if (lastDirection !== 0 && currentDir !== lastDirection) {
+        const timeSinceFlip = Date.now() - lastDirectionTime;
+        if (timeSinceFlip < 350) {
+          if (scrollY < heroMaxScroll - 20) {
+            e.preventDefault();
+          }
+          return;
+        }
+      }
+
       // ── CASE 1: SCROLL DOWN (e.deltaY > 0) ──
       if (e.deltaY > 0) {
+        lastDirection = 1;
+        lastDirectionTime = Date.now();
+
         // While within the hero pinned range (before the final product at Stage 4):
         if (scrollY < heroMaxScroll - 20) {
-          e.preventDefault(); // Intercept raw scroll, execute clean 1-product transition
+          e.preventDefault(); // Intercept raw scroll
 
           if (isAnimatingRef.current) return;
+
+          // Auto-decay timer: reset accumulator if no wheel pulses for 200ms
+          if (wheelResetTimer) clearTimeout(wheelResetTimer);
+          wheelResetTimer = setTimeout(() => {
+            wheelAccumulatorRef.current = 0;
+          }, 200);
 
           wheelAccumulatorRef.current += e.deltaY;
           if (wheelAccumulatorRef.current >= WHEEL_THRESHOLD) {
             wheelAccumulatorRef.current = 0;
             const nextStage = Math.min(4, currentStageRef.current + 1);
-            transitionToStage(nextStage);
+            if (nextStage !== currentStageRef.current) {
+              transitionToStage(nextStage);
+            }
           }
           return;
         }
@@ -396,29 +407,39 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         // At Stage 4 (scrollY >= heroMaxScroll - 20):
         // All 5 products have now been shown!
         // DO NOT call e.preventDefault()!
-        // ScrollTrigger reaches 'end', unpins the element, and page scrolls down to the next section!
+        // ScrollTrigger reaches 'end', unpins the element, and page scrolls down to next section!
         return;
       }
 
       // ── CASE 2: SCROLL UP (e.deltaY < 0) ──
       if (e.deltaY < 0) {
+        lastDirection = -1;
+        lastDirectionTime = Date.now();
+
         // If user is currently down in the rest of the website below hero:
-        if (scrollY > heroMaxScroll + 20) {
+        if (scrollY > heroMaxScroll + 30) {
           // Allow normal upward scrolling back towards the hero
           return;
         }
 
         // If user is at or entering the hero pinned section:
-        if (currentStageRef.current > 0 && scrollY <= heroMaxScroll + 20) {
+        if (currentStageRef.current > 0 && scrollY <= heroMaxScroll + 30) {
           e.preventDefault();
 
           if (isAnimatingRef.current) return;
+
+          if (wheelResetTimer) clearTimeout(wheelResetTimer);
+          wheelResetTimer = setTimeout(() => {
+            wheelAccumulatorRef.current = 0;
+          }, 200);
 
           wheelAccumulatorRef.current += e.deltaY;
           if (wheelAccumulatorRef.current <= -WHEEL_THRESHOLD) {
             wheelAccumulatorRef.current = 0;
             const prevStage = Math.max(0, currentStageRef.current - 1);
-            transitionToStage(prevStage);
+            if (prevStage !== currentStageRef.current) {
+              transitionToStage(prevStage);
+            }
           }
           return;
         }
@@ -453,6 +474,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      if (wheelResetTimer) clearTimeout(wheelResetTimer);
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('keydown', handleKeyDown);
     };
