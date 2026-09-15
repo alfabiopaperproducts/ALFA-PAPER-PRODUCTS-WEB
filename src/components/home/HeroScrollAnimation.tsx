@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useNavigationType } from 'react-router-dom';
 import { gsap } from '../../lib/gsap';
 import { ArrowDown, Sparkles } from 'lucide-react';
 import { useSmoothScroll } from '../common/SmoothScrollProvider';
@@ -101,6 +102,8 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { lenis } = useSmoothScroll();
 
+  const navigationType = useNavigationType();
+
   // Responsive device mode
   const [isMobile, setIsMobile] = useState<boolean>(() =>
     typeof window !== 'undefined' ? window.innerWidth < 768 : false
@@ -110,15 +113,26 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     isMobileRef.current = isMobile;
   }, [isMobile]);
 
+  // Determine if this is a return navigation where the hero was already completed:
+  // 1. User returns via POP (browser back button).
+  // 2. Or user has already scrolled past the hero in this session.
+  const isPop = navigationType === 'POP';
+  const hasCompletedHero = typeof window !== 'undefined' && sessionStorage.getItem('alfa_hero_completed') === 'true';
+  const shouldStartCompleted = isPop && hasCompletedHero;
+  const initialStage = shouldStartCompleted ? 4 : 0;
+  const initialFrame = shouldStartCompleted
+    ? (isMobile ? MOBILE_STAGE_FRAMES[4] : DESKTOP_STAGE_FRAMES[4])
+    : 0;
+
   // Preloaded image references: independent desktop and mobile caches
   const desktopImagesRef = useRef<(HTMLImageElement | null)[]>(new Array(DESKTOP_TOTAL_FRAMES).fill(null));
   const mobileImagesRef = useRef<(HTMLImageElement | null)[]>(new Array(MOBILE_TOTAL_FRAMES).fill(null));
 
-  const currentFrameRef = useRef<number>(0);
-  const animRef = useRef<{ frame: number }>({ frame: 0 });
+  const currentFrameRef = useRef<number>(initialFrame);
+  const animRef = useRef<{ frame: number }>({ frame: initialFrame });
 
   // Controlled stage state machine (0 to 4) - SINGLE SOURCE OF TRUTH
-  const currentStageRef = useRef<number>(0);
+  const currentStageRef = useRef<number>(initialStage);
   const isAnimatingRef = useRef<boolean>(false);
   const isTransitioningSectionRef = useRef<boolean>(false);
   const wheelAccumulatorRef = useRef<number>(0);
@@ -129,7 +143,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     lenisRef.current = lenis;
   }, [lenis]);
 
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const [activeStep, setActiveStep] = useState<number>(initialStage);
   const [loadProgress, setLoadProgress] = useState<number>(0);
 
   // Helper to find closest available loaded image if an intermediate frame is missing
@@ -348,6 +362,10 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     if (isTransitioningSectionRef.current) return;
     isTransitioningSectionRef.current = true;
 
+    try {
+      sessionStorage.setItem('alfa_hero_completed', 'true');
+    } catch {}
+
     const heroSection = document.getElementById('hero-section');
     const targetY = heroSection ? heroSection.offsetTop : window.innerHeight;
     const activeLenis = lenisRef.current;
@@ -421,7 +439,20 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
     }, 1000);
   }, [drawFrame]);
 
-  // Initial Lock: While inside hero showcase (stages 0 to 4), keep scroll locked at top
+  // Track scroll depth to remember that the hero has been completed in this session
+  useEffect(() => {
+    const handleCheckScroll = () => {
+      if (window.scrollY >= 50) {
+        try {
+          sessionStorage.setItem('alfa_hero_completed', 'true');
+        } catch {}
+      }
+    };
+    window.addEventListener('scroll', handleCheckScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleCheckScroll);
+  }, []);
+
+  // Initial Lock: While inside hero showcase (stages 0 to 4), keep scroll locked at top (desktop fine pointer only)
   useEffect(() => {
     if (!lenis) return;
 
@@ -429,6 +460,10 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
       lenis.stop();
       window.scrollTo(0, 0);
     }
+
+    return () => {
+      lenis.start();
+    };
   }, [lenis]);
 
   // Unified Gesture Engine: Mobile Touch, Desktop Mouse Wheel, Keyboard (1 Gesture = 1 Product)
@@ -645,7 +680,7 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
 
       // SWIPE UP (User wants to scroll DOWN)
       if (deltaY > 0) {
-        if (currentStageRef.current < 4) {
+        if (currentStageRef.current < 4 && scrollY < 50) {
           if (!isAnimatingRef.current) {
             transitionToStage(currentStageRef.current + 1);
           }

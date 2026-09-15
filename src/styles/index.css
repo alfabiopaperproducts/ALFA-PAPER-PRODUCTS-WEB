@@ -22,8 +22,11 @@
     overscroll-behavior: contain;
   }
 
-  .lenis.lenis-stopped {
-    overflow: hidden;
+  /* Only lock overflow on desktop when Lenis is explicitly stopped */
+  @media (hover: hover) and (pointer: fine) {
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
   }
 
   .lenis.lenis-smooth iframe {

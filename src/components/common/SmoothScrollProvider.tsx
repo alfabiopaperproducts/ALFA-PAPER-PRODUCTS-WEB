@@ -1,20 +1,23 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigationType } from 'react-router-dom';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import { gsap, ScrollTrigger } from '../../lib/gsap';
 
 interface SmoothScrollContextType {
   lenis: Lenis | null;
+  isTouchDevice: boolean;
 }
 
-const SmoothScrollContext = createContext<SmoothScrollContextType>({ lenis: null });
+const SmoothScrollContext = createContext<SmoothScrollContextType>({ lenis: null, isTouchDevice: false });
 
 export const useSmoothScroll = () => useContext(SmoothScrollContext);
 
 export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState<boolean>(false);
   const { pathname } = useLocation();
+  const navigationType = useNavigationType();
 
   useEffect(() => {
     // Check if user prefers reduced motion
@@ -23,7 +26,24 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
       return;
     }
 
-    // Initialize Lenis smooth scroll
+    // Touch / Mobile Detection:
+    // Mobile OS and touchscreens have native 120Hz compositor-driven momentum scrolling.
+    // Lenis should ONLY run on desktop fine-pointer devices (mouse/trackpad).
+    // Running Lenis on mobile hijacks touch events, causes touch traps, and freezes the screen on navigation.
+    const isTouch =
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.innerWidth < 1024;
+
+    setIsTouchDevice(isTouch);
+
+    if (isTouch) {
+      // Use native mobile momentum scrolling with zero JavaScript touch interception.
+      return;
+    }
+
+    // Initialize Lenis smooth scroll for desktop fine-pointer devices only
     const lenisInstance = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -31,7 +51,7 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1.0,
-      touchMultiplier: 1.2,
+      syncTouch: false, // Never intercept touch events
     });
 
     setLenis(lenisInstance);
@@ -54,17 +74,24 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
     };
   }, []);
 
-  // Handle route change: scroll to top immediately without lag
+  // Handle route change:
+  // ONLY scroll to top on 'PUSH' navigation (user explicitly clicked a new link to visit a page).
+  // On 'POP' navigation (browser Back / Forward button), DO NOT force scroll to top.
+  // This allows the browser to restore the user's previous scroll position without jumping to top.
   useEffect(() => {
+    if (navigationType === 'POP') {
+      return;
+    }
+
     if (lenis) {
       lenis.scrollTo(0, { immediate: true });
     } else {
       window.scrollTo(0, 0);
     }
-  }, [pathname, lenis]);
+  }, [pathname, lenis, navigationType]);
 
   return (
-    <SmoothScrollContext.Provider value={{ lenis }}>
+    <SmoothScrollContext.Provider value={{ lenis, isTouchDevice }}>
       {children}
     </SmoothScrollContext.Provider>
   );
