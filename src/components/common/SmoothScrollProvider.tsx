@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
@@ -13,7 +13,7 @@ const SmoothScrollContext = createContext<SmoothScrollContextType>({ lenis: null
 export const useSmoothScroll = () => useContext(SmoothScrollContext);
 
 export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const lenisRef = useRef<Lenis | null>(null);
+  const [lenis, setLenis] = useState<Lenis | null>(null);
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
 
     // Initialize Lenis smooth scroll
-    const lenis = new Lenis({
+    const lenisInstance = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
@@ -34,14 +34,14 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
       touchMultiplier: 1.2,
     });
 
-    lenisRef.current = lenis;
+    setLenis(lenisInstance);
 
     // Synchronize Lenis scroll position with GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
+    lenisInstance.on('scroll', ScrollTrigger.update);
 
     // Bind Lenis animation frame to GSAP ticker for 60/120Hz monitor synchronization
     const updateTicker = (time: number) => {
-      lenis.raf(time * 1000);
+      lenisInstance.raf(time * 1000);
     };
 
     gsap.ticker.add(updateTicker);
@@ -49,22 +49,22 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     return () => {
       gsap.ticker.remove(updateTicker);
-      lenis.destroy();
-      lenisRef.current = null;
+      lenisInstance.destroy();
+      setLenis(null);
     };
   }, []);
 
   // Handle route change: scroll to top immediately without lag
   useEffect(() => {
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(0, { immediate: true });
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
     } else {
       window.scrollTo(0, 0);
     }
-  }, [pathname]);
+  }, [pathname, lenis]);
 
   return (
-    <SmoothScrollContext.Provider value={{ lenis: lenisRef.current }}>
+    <SmoothScrollContext.Provider value={{ lenis }}>
       {children}
     </SmoothScrollContext.Provider>
   );
