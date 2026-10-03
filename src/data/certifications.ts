@@ -56,6 +56,6 @@ export const qualityPriorities = [
   { title: 'Functional Performance', desc: 'Thermal stability and structural rigidity under load' },
   { title: 'Oil & Grease Resistance', desc: 'Effective barrier treatment without plastic leakage' },
   { title: 'Product Consistency', desc: 'Uniform die-cutting and folding precision on modern equipment' },
-  { title: 'Responsible Manufacturing', desc: 'Clean, low-waste production practices established since 1985' },
+  { title: 'Responsible Manufacturing', desc: 'Clean, low-waste automated production with sustainable material sourcing' },
   { title: 'Environmental Compliance', desc: 'Full adherence to national environmental directives and EPR norms' },
 ];

@@ -48,7 +48,7 @@ export const Contact: React.FC = () => {
                   Manufacturing Facility & Sales Office
                 </h2>
                 <p className="text-sm text-charcoal-600 mt-2 leading-relaxed">
-                  Established in 1985 in Malappuram district, Kerala. We serve commercial buyers, hotel chains, caterers, and wholesalers across South India and beyond.
+                  Located in Malappuram district, Kerala, our modern manufacturing facility supplies hypermarket chains, retail supermarkets, hotel networks, and institutional caterers across South India and export markets.
                 </p>
               </div>
 

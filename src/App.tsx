@@ -50,6 +50,7 @@ export const App: React.FC = () => {
               <Route path="/products/:slug" element={<ProductDetail onOpenQuoteModal={handleOpenQuoteModal} />} />
               <Route path="/sustainability" element={<Sustainability onOpenQuoteModal={() => handleOpenQuoteModal()} />} />
               <Route path="/quality" element={<QualityCompliance onOpenQuoteModal={() => handleOpenQuoteModal()} />} />
+              <Route path="/certificate" element={<QualityCompliance onOpenQuoteModal={() => handleOpenQuoteModal()} />} />
               <Route path="/custom-solutions" element={<CustomSolutions onOpenQuoteModal={() => handleOpenQuoteModal()} />} />
               <Route path="/industries" element={<Industries onOpenQuoteModal={handleOpenQuoteModal} />} />
               <Route path="/contact" element={<Contact />} />

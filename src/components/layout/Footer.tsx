@@ -11,20 +11,20 @@ export const Footer: React.FC = () => {
       <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 rounded-full bg-brand-500/5 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-96 h-96 rounded-full bg-brand-700/5 blur-3xl pointer-events-none" />
 
-      {/* Trust & Heritage Banner */}
+      {/* Trust & Accreditations Banner */}
       <div className="border-b border-charcoal-800/80 bg-charcoal-900/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
             <div className="flex items-center gap-3">
-              <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400 font-bold text-sm">
-                1985
+              <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400">
+                <ShieldCheck className="w-5 h-5" />
               </span>
               <div>
                 <p className="font-semibold text-white text-sm sm:text-base">
-                  Since 1985 – Manufacturing Sustainable Alternatives for a Better Tomorrow.
+                  Certified Sustainable Paper Packaging Solutions
                 </p>
                 <p className="text-xs text-charcoal-400">
-                  Four decades of trusted paper packaging manufacturing in Kerala, India.
+                  Trusted by premier supermarkets, hypermarkets, and food brands across South India.
                 </p>
               </div>
             </div>
@@ -79,11 +79,10 @@ export const Footer: React.FC = () => {
                 { label: 'Home', href: '/' },
                 { label: 'About Us', href: '/about' },
                 { label: 'Products', href: '/products' },
-                { label: 'Sustainability', href: '/sustainability' },
-                { label: 'Quality & Compliance', href: '/quality' },
-                { label: 'Custom Solutions', href: '/custom-solutions' },
-                { label: 'Industries We Serve', href: '/industries' },
+                { label: 'Certificate', href: '/certificate' },
                 { label: 'Contact Us', href: '/contact' },
+                { label: 'Sustainability', href: '/sustainability' },
+                { label: 'Custom Solutions', href: '/custom-solutions' },
               ].map((link) => (
                 <li key={link.label}>
                   <Link

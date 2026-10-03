@@ -32,6 +32,7 @@ import heroImg from '../assets/hero-sustainable-paper.jpg';
 import factoryImg from '../assets/factory-paper-production.jpg';
 import sustainabilityBg from '../assets/sustainability-bg.png';
 import { HeroScrollAnimation } from '../components/home/HeroScrollAnimation';
+import { ClientShowcase } from '../components/common/ClientShowcase';
 
 interface HomeProps {
   onOpenQuoteModal: (productName?: string) => void;
@@ -90,7 +91,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
     <div className="overflow-x-clip">
       <SeoHead
         title="Sustainable Paper Products Manufacturer in Kerala | ALFA PAPER PRODUCTS"
-        description="Manufacturers of biodegradable, compostable and plastic-free paper products since 1985. Food-grade plates, cups, trays, burger boxes, and bakery packaging in Tirur, Kerala."
+        description="Manufacturers of certified biodegradable, compostable and plastic-free paper products for supermarkets, food service, bakeries, and catering in Tirur, Kerala."
         schema={generateOrganizationSchema()}
       />
 
@@ -107,15 +108,15 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
           <div ref={heroRef} className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Hero Left Content (7 cols) */}
             <div className="lg:col-span-7 space-y-6">
-              {/* Heritage Badge */}
+              {/* Certified Eco Badge */}
               <div className="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-charcoal-200/80 shadow-xs max-w-full">
                 <span className="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0" />
-                <span className="text-xs font-bold uppercase tracking-wider text-charcoal-800 whitespace-nowrap">
-                  SINCE 1985
+                <span className="text-xs font-bold uppercase tracking-wider text-brand-700 whitespace-nowrap">
+                  CERTIFIED ECO PACKAGING
                 </span>
                 <span className="text-charcoal-300 hidden sm:inline">•</span>
                 <span className="text-xs font-medium text-charcoal-600 hidden sm:inline whitespace-nowrap">
-                  Four Decades of Manufacturing Excellence
+                  Food-Grade & 100% Biodegradable
                 </span>
               </div>
 
@@ -136,7 +137,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
 
               {/* Supporting Subheading */}
               <p className="text-base sm:text-lg lg:text-xl text-charcoal-700 font-medium leading-relaxed max-w-2xl">
-                Manufacturing eco-friendly paper solutions since 1985.
+                Precision-engineered paper packaging for retail hypermarkets, food service, and commercial distribution.
               </p>
 
               {/* Value Proposition Body */}
@@ -166,7 +167,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
               {/* Supporting Line & Badges */}
               <div className="pt-6 border-t border-charcoal-200/70">
                 <p className="text-xs font-bold uppercase tracking-wider text-charcoal-500 mb-3 leading-relaxed">
-                  Since 1985 • Food-Grade Materials • Plastic-Free Solutions • Sustainable Manufacturing
+                  CIPET Tested • 100% Food-Grade Board • Plastic-Free Barriers • Bulk Commercial Supply
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="green" size="md" icon={<Leaf className="w-3.5 h-3.5 text-brand-600" />}>
@@ -208,15 +209,15 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
                   </div>
                 </div>
 
-                {/* Floating Heritage Stat Card - Desktop only */}
+                {/* Floating Capacity Stat Card - Desktop only */}
                 <div className="hidden sm:block absolute -bottom-6 -left-4 sm:-left-6 bg-white rounded-xl p-4 shadow-xl border border-charcoal-200/80 max-w-[200px]">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-base border border-brand-200 flex-shrink-0">
-                      40+
+                      20+
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-charcoal-900 whitespace-nowrap">Years Legacy</p>
-                      <p className="text-[10px] text-charcoal-500 whitespace-nowrap">Established 1985</p>
+                      <p className="text-xs font-bold text-charcoal-900 whitespace-nowrap">Tons Daily</p>
+                      <p className="text-[10px] text-charcoal-500 whitespace-nowrap">Automated Output</p>
                     </div>
                   </div>
                 </div>
@@ -230,12 +231,12 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
                   </div>
                 </div>
 
-                {/* Mobile-only Clean Trust Bar (eliminates card overlap on phones) */}
+                {/* Mobile-only Clean Trust Bar */}
                 <div className="flex sm:hidden items-center justify-between gap-2 mt-3 px-3.5 py-2.5 bg-white rounded-xl border border-charcoal-200/80 text-xs shadow-xs">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-brand-600">40+ Years</span>
+                    <span className="font-bold text-brand-600">Food-Safe</span>
                     <span className="text-charcoal-300">•</span>
-                    <span className="text-charcoal-600 text-[11px]">Est. 1985</span>
+                    <span className="text-charcoal-600 text-[11px]">100% Virgin Board</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-brand-700 text-[11px] font-medium">
                     <Award className="w-3.5 h-3.5 text-brand-600" />
@@ -247,6 +248,9 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
           </div>
         </div>
       </section>
+
+      {/* MAJOR CLIENT SHOWCASE - LOGOS ONLY */}
+      <ClientShowcase />
 
       {/* 2. ABOUT PREVIEW SECTION */}
       <section className="py-16 sm:py-20 bg-white">
@@ -263,8 +267,8 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
               </div>
               {/* Overlay Stat */}
               <div className="absolute bottom-6 right-6 bg-brand-500 text-white rounded-xl p-4 shadow-lg">
-                <p className="text-2xl font-extrabold leading-none">1985</p>
-                <p className="text-xs font-medium text-brand-100 mt-1">Established Heritage</p>
+                <p className="text-2xl font-extrabold leading-none">100%</p>
+                <p className="text-xs font-medium text-brand-100 mt-1">Plastic-Free Board</p>
               </div>
             </div>
 
@@ -272,8 +276,8 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
             <div className="lg:col-span-7 space-y-5 order-1 lg:order-2">
               <SectionHeading
                 pill="About ALFA"
-                title="Sustainable Manufacturing Since 1985"
-                subtitle="For over four decades, ALFA PAPER PRODUCTS has been manufacturing practical and responsible alternatives to conventional single-use plastic products."
+                title="Industrial Quality. Sustainable Scale."
+                subtitle="ALFA PAPER PRODUCTS manufactures high-performance, responsible alternatives to single-use plastics, engineered for premier retail hypermarkets and commercial food brands."
               />
 
               <div className="space-y-4 text-sm sm:text-base text-charcoal-600 leading-relaxed">
@@ -620,11 +624,11 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
             Make the Shift Towards Sustainable Packaging
           </h2>
           <p className="text-base sm:text-lg text-charcoal-300 leading-relaxed max-w-2xl mx-auto">
-            Partner with a manufacturer backed by decades of experience in paper products.
+            Partner with South India’s trusted manufacturer for dependable bulk supply, custom branding, and certified eco-friendly quality.
           </p>
           <div className="pt-2">
             <p className="text-xs sm:text-sm font-semibold text-brand-400 uppercase tracking-widest mb-6">
-              Since 1985 – Manufacturing Sustainable Alternatives for a Better Tomorrow.
+              Certified Sustainable Alternatives for a Greener Tomorrow
             </p>
             <Button
               variant="primary"

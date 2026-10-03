@@ -38,15 +38,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQuoteModal }) => {
       href: '/products',
       hasDropdown: true,
     },
-    { label: 'Sustainability', href: '/sustainability' },
-    { label: 'Quality', href: '/quality' },
-    { label: 'Custom Solutions', href: '/custom-solutions' },
-    { label: 'Industries', href: '/industries' },
+    { label: 'Certificate', href: '/certificate' },
     { label: 'Contact', href: '/contact' },
   ];
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
+    if (path === '/certificate') return location.pathname === '/certificate' || location.pathname === '/quality';
     return location.pathname.startsWith(path);
   };
 
@@ -203,7 +201,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQuoteModal }) => {
                 <span className="text-xs font-bold uppercase tracking-wider text-charcoal-400">
                   Navigation
                 </span>
-                <span className="text-xs font-medium text-brand-600">Est. 1985</span>
+                <span className="text-xs font-semibold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-200">
+                  Certified Eco Packaging
+                </span>
               </div>
 
               {navLinks.map((link) => (

@@ -202,12 +202,29 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
       let offsetX = 0;
       let offsetY = 0;
 
-      if (canvasRatio > imgRatio) {
-        drawHeight = width / imgRatio;
-        offsetY = (height - drawHeight) / 2;
+      if (useMobile) {
+        // MOBILE VERSION: 100% ORIGINAL (Untouched full-screen cover)
+        if (canvasRatio > imgRatio) {
+          drawHeight = width / imgRatio;
+          offsetY = (height - drawHeight) / 2;
+        } else {
+          drawWidth = height * imgRatio;
+          offsetX = (width - drawWidth) / 2;
+        }
       } else {
-        drawWidth = height * imgRatio;
-        offsetX = (width - drawWidth) / 2;
+        // DESKTOP VERSION: 100% FULL SCREEN (Edge-to-edge cover, zero white space)
+        if (canvasRatio > imgRatio) {
+          drawWidth = width;
+          drawHeight = width / imgRatio;
+          offsetX = 0;
+          // Align top at 0 so product is not pushed up behind header
+          offsetY = 0;
+        } else {
+          drawWidth = height * imgRatio;
+          drawHeight = height;
+          offsetX = (width - drawWidth) / 2;
+          offsetY = 0;
+        }
       }
 
       ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
@@ -786,9 +803,8 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
           className="absolute inset-0 w-full h-full block object-cover"
         />
 
-        {/* Top and bottom subtle edge fades */}
-        <div className="absolute inset-x-0 top-0 h-24 sm:h-28 pointer-events-none bg-gradient-to-b from-[#f4f2ee]/90 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-20 pointer-events-none bg-gradient-to-t from-[#f4f2ee]/80 to-transparent" />
+        {/* Bottom subtle edge fade */}
+        <div className="absolute inset-x-0 bottom-0 h-16 pointer-events-none bg-gradient-to-t from-[#f4f2ee]/80 to-transparent" />
 
         {/* Top Brand Bar & Loading Indicator */}
         <div className="absolute top-20 sm:top-24 left-3.5 sm:left-8 right-3.5 sm:right-8 z-20 flex items-center justify-between pointer-events-none">

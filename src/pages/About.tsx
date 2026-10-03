@@ -4,6 +4,7 @@ import { SeoHead } from '../components/common/SeoHead';
 import { Button } from '../components/common/Button';
 import { SectionHeading } from '../components/common/SectionHeading';
 import { Breadcrumbs } from '../components/common/Breadcrumbs';
+import { ClientShowcase } from '../components/common/ClientShowcase';
 import { useGsapReveal } from '../hooks/useGsapReveal';
 import heroImg from '../assets/hero-sustainable-paper.jpg';
 
@@ -18,8 +19,8 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
   return (
     <div className="pt-24 lg:pt-28">
       <SeoHead
-        title="About ALFA PAPER PRODUCTS | Sustainable Paper Manufacturer Since 1985"
-        description="Learn about ALFA PAPER PRODUCTS, established in 1985 in Tirur, Kerala. Over four decades of manufacturing food-grade, biodegradable, and compostable paper packaging."
+        title="About ALFA PAPER PRODUCTS | Sustainable Paper Packaging Manufacturer"
+        description="Learn about ALFA PAPER PRODUCTS in Tirur, Kerala. Premier manufacturers of food-grade, biodegradable, compostable and plastic-free paper packaging for retail and food service."
         canonicalUrl="https://alfapaperproducts.com/about"
       />
 
@@ -33,13 +34,13 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 text-brand-700 border border-brand-200 text-xs font-bold uppercase tracking-wider">
-              Est. 1985 • Tirur, Kerala
+              Tirur, Kerala • Industrial Packaging Leader
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal-900 tracking-tight leading-tight">
-              More Than Four Decades of Paper Product Manufacturing
+              Pioneering Sustainable Paper Packaging Solutions
             </h1>
             <p className="text-base sm:text-lg text-charcoal-600 font-medium">
-              Established in 1985. Built around quality, responsibility and sustainable progress.
+              Precision engineering, certified food safety, and environmental stewardship for commercial retail leaders.
             </p>
           </div>
         </div>
@@ -53,22 +54,22 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
             <div className="lg:col-span-7 space-y-6">
               <SectionHeading
                 pill="Our Heritage"
-                title="ALFA PAPER PRODUCTS Story"
-                subtitle="From our founding in 1985 to modern sustainable manufacturing."
+                title="The ALFA Story"
+                subtitle="From early industrial roots to modern automated sustainable manufacturing."
               />
 
               <div className="space-y-4 text-sm sm:text-base text-charcoal-600 leading-relaxed">
                 <p>
-                  Established in 1985, ALFA PAPER PRODUCTS is a manufacturer of eco-friendly and sustainable paper products based in Kerala, India.
+                  Founded in 1985 in Tirur, Kerala, ALFA PAPER PRODUCTS has evolved from a dedicated paper manufacturing unit into a premier producer of eco-friendly, certified food-grade packaging.
                 </p>
                 <p>
-                  With decades of experience in the paper products industry, we manufacture practical paper-based solutions for food service, bakery, catering, hospitality and related applications.
+                  Built on a foundation of precision engineering and statutory compliance, we supply dependable, plastic-free packaging solutions for supermarket chains, food service providers, commercial bakeries, and hospitality networks across India and GCC export markets.
                 </p>
                 <p>
-                  As businesses and consumers increasingly move away from conventional single-use plastics, we remain committed to developing reliable alternatives made with environmental responsibility in mind.
+                  As enterprise brands transition toward circular sustainability, we develop biodegradable and compostable alternatives that match conventional plastics in thermal stability, structural rigidity, and barrier performance.
                 </p>
                 <p>
-                  Today, our product portfolio includes paper plates, paper cups, paper trays, burger boxes, bakery boxes, food packaging products and customized paper solutions.
+                  Our comprehensive product line includes food-grade paper plates, hot and cold beverage cups, compartmental trays, burger and meal boxes, bakery containers, and bespoke commercial packaging solutions.
                 </p>
               </div>
 
@@ -92,12 +93,12 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
               <div className="relative rounded-2xl overflow-hidden border border-charcoal-200/80 shadow-soft bg-kraft-100">
                 <img
                   src={heroImg}
-                  alt="ALFA Paper Products Heritage"
+                  alt="ALFA Paper Products Manufacturing Facility"
                   className="w-full h-80 object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
                   <span className="text-xs font-bold uppercase tracking-wider text-brand-300">
-                    Trusted Since 1985
+                    Modern Automated Facility
                   </span>
                   <p className="text-base font-bold text-white mt-0.5">
                     Vailathur, Athanikkal, Tirur – Kerala
@@ -107,11 +108,11 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
 
               <div className="bg-kraft-50/70 p-6 rounded-2xl border border-charcoal-200/80 space-y-3">
                 <div className="flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-brand-600 flex-shrink-0" />
-                  <h4 className="font-bold text-sm text-charcoal-900">40+ Years of Reliability</h4>
+                  <ShieldCheck className="w-5 h-5 text-brand-600 flex-shrink-0" />
+                  <h4 className="font-bold text-sm text-charcoal-900">Certified Quality & Compliance</h4>
                 </div>
                 <p className="text-xs text-charcoal-600 leading-relaxed">
-                  Decades of manufacturing know-how, ensuring every batch meets the highest benchmarks for hygiene, dimensional accuracy, and food-grade safety.
+                  Rigorous automated production ensuring every batch complies with CPCB norms, CIPET compostability testing, and international food contact hygiene standards.
                 </p>
               </div>
             </div>
@@ -124,9 +125,9 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             align="center"
-            pill="Core Direction"
-            title="Our Purpose, Mission & Vision"
-            subtitle="Driving the transition away from single-use plastics through responsible manufacturing."
+            pill="Strategic Purpose"
+            title="Our Mission, Vision & Purpose"
+            subtitle="Championing the transition away from single-use plastics through industrial scale and scientific responsibility."
             className="mb-14"
           />
 
@@ -138,9 +139,9 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
                   <Leaf className="w-6 h-6" />
                 </div>
                 <div className="text-xs font-bold uppercase tracking-wider text-brand-600">Our Purpose</div>
-                <h3 className="text-xl font-bold text-charcoal-900">Responsible Products for a Changing World</h3>
+                <h3 className="text-xl font-bold text-charcoal-900">Eliminating Single-Use Plastics</h3>
                 <p className="text-sm text-charcoal-600 leading-relaxed">
-                  The environmental impact caused by single-use plastics has created a growing need for better alternatives. ALFA PAPER PRODUCTS exists to support that transition. We manufacture biodegradable, compostable and plastic-free paper products that help businesses meet everyday operational requirements while reducing dependence on conventional plastic disposables.
+                  Single-use plastic pollution requires immediate, industrial-grade alternatives. ALFA PAPER PRODUCTS exists to eliminate non-recyclable plastic disposables by manufacturing 100% biodegradable and compostable paper packaging that matches conventional plastics in durability, barrier resistance, and economic viability.
                 </p>
               </div>
             </div>
@@ -152,9 +153,9 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
                   <Target className="w-6 h-6" />
                 </div>
                 <div className="text-xs font-bold uppercase tracking-wider text-brand-600">Our Mission</div>
-                <h3 className="text-xl font-bold text-charcoal-900">Replacing Single-Use Plastics with Responsible Alternatives</h3>
+                <h3 className="text-xl font-bold text-charcoal-900">Engineering Certified Food-Grade Packaging</h3>
                 <p className="text-sm text-charcoal-600 leading-relaxed">
-                  Our mission is to replace conventional single-use plastics with sustainable, biodegradable and compostable paper products. We believe environmental protection and business growth can progress together. Through continuous product development and responsible manufacturing, we aim to provide businesses with practical paper-based solutions for a cleaner future.
+                  Our mission is to engineer and manufacture certified food-safe, plastic-free paper products that empower supermarket chains, restaurants, and commercial bakeries to operate sustainably without compromising on functional performance, customer hygiene, or brand presentation.
                 </p>
               </div>
             </div>
@@ -166,9 +167,9 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
                   <Compass className="w-6 h-6" />
                 </div>
                 <div className="text-xs font-bold uppercase tracking-wider text-brand-600">Our Vision</div>
-                <h3 className="text-xl font-bold text-charcoal-900">Building a More Sustainable Future</h3>
+                <h3 className="text-xl font-bold text-charcoal-900">Setting the Benchmark in Circular Packaging</h3>
                 <p className="text-sm text-charcoal-600 leading-relaxed">
-                  Our vision is to become a trusted manufacturer of sustainable paper products and contribute actively to India's transition toward a plastic-free and environmentally responsible future.
+                  Our vision is to be South India's foremost sustainable packaging manufacturer and export partner, spearheading the circular economy transition and establishing zero-plastic benchmarks for commercial packaging across national and international markets.
                 </p>
               </div>
             </div>
@@ -183,35 +184,35 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
             align="center"
             pill="Core Values"
             title="What Defines ALFA"
-            subtitle="The foundational principles that guide every product we create."
+            subtitle="The foundational principles that guide every batch we manufacture."
             className="mb-14"
           />
 
           <div ref={pillarsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {[
               {
-                title: 'Experience',
-                desc: 'Manufacturing paper products since 1985.',
+                title: 'Manufacturing Depth',
+                desc: 'Over four decades of specialized paper converting expertise and client trust.',
                 icon: <Clock className="w-5 h-5 text-brand-600" />,
               },
               {
-                title: 'Quality',
-                desc: 'Focus on functional, food-grade products for commercial applications.',
+                title: 'Certified Safety',
+                desc: '100% virgin food-grade paperboard meeting strict hygiene and non-toxicity benchmarks.',
                 icon: <Award className="w-5 h-5 text-brand-600" />,
               },
               {
-                title: 'Responsibility',
-                desc: 'Products developed with environmental impact in mind.',
+                title: 'Compliance Rigor',
+                desc: 'Active CPCB approval, EPR certification, and CIPET compostability testing.',
                 icon: <ShieldCheck className="w-5 h-5 text-brand-600" />,
               },
               {
-                title: 'Reliability',
-                desc: 'Manufacturing solutions suitable for businesses across multiple sectors.',
+                title: 'Industrial Scale',
+                desc: 'High-speed automated machinery delivering consistent supply to major retail chains.',
                 icon: <Factory className="w-5 h-5 text-brand-600" />,
               },
               {
-                title: 'Sustainability',
-                desc: 'Supporting the transition away from conventional single-use plastics.',
+                title: 'Eco Innovation',
+                desc: 'Continuous development of plastic-free aqueous and natural barrier solutions.',
                 icon: <Leaf className="w-5 h-5 text-brand-600" />,
               },
             ].map((pillar, idx) => (
@@ -229,6 +230,13 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
           </div>
         </div>
       </section>
+
+      {/* Major Clients Showcase - Logos Only */}
+      <ClientShowcase
+        pill="Retail & Commercial Partners"
+        title="Trusted by Major Supermarkets & Hypermarkets"
+        subtitle="Supplying food-grade, certified sustainable paper packaging to leading retail and hypermarket brands across South India."
+      />
 
       {/* CTA Strip */}
       <section className="py-16 bg-[#162118] text-white text-center">

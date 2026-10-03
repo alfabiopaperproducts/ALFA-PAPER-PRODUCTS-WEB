@@ -25,7 +25,7 @@ export const QualityCompliance: React.FC<QualityProps> = ({ onOpenQuoteModal }) 
 
       {/* Breadcrumbs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Breadcrumbs items={[{ label: 'Quality & Compliance' }]} />
+        <Breadcrumbs items={[{ label: 'Certificates & Quality Compliance' }]} />
       </div>
 
       {/* Hero */}
@@ -33,13 +33,13 @@ export const QualityCompliance: React.FC<QualityProps> = ({ onOpenQuoteModal }) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
             <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
-              Regulatory Standards & Rigor
+              Government Accreditations & Lab Reports
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal-900 tracking-tight">
-              Quality, Safety & Environmental Responsibility
+              Certificates & Regulatory Compliance
             </h1>
             <p className="text-base sm:text-lg text-charcoal-600 font-medium">
-              Manufacturing paper products backed by responsible materials, testing and regulatory compliance.
+              CPCB approved, CIPET compostability tested, EPR registered, and 100% certified food-grade packaging.
             </p>
           </div>
         </div>
