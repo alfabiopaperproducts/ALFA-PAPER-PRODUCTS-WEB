@@ -33,6 +33,7 @@ import factoryImg from '../assets/factory-paper-production.jpg';
 import sustainabilityBg from '../assets/sustainability-bg.png';
 import { HeroScrollAnimation } from '../components/home/HeroScrollAnimation';
 import { ClientShowcase } from '../components/common/ClientShowcase';
+import { FactoryVideoSection } from '../components/home/FactoryVideoSection';
 
 interface HomeProps {
   onOpenQuoteModal: (productName?: string) => void;
@@ -360,6 +361,9 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
           </div>
         </div>
       </section>
+
+      {/* FACTORY VIDEO SHOWCASE - WHERE SUSTAINABILITY TAKES SHAPE */}
+      <FactoryVideoSection />
 
       {/* 4. WHY CHOOSE ALFA */}
       <section className="py-16 sm:py-24 bg-white">
