@@ -58,8 +58,8 @@ const PRODUCT_STEPS: ProductStep[] = [
     title: 'Paper Food Tubs & Bowls',
     subtitle: 'Leak-Resistant Bowls with Airtight Fit',
     description:
-      'High-GSM food containers designed for hot gravies, soups, noodles, and meal bowls. Tested and validated for compostability at CIPET Kochi.',
-    features: ['Leak-Proof Double Seam', 'Tight-Fit Paper Lids', 'Microwave Reheatable', 'CIPET Tested'],
+      'High-GSM food containers designed for hot gravies, soups, noodles, and meal bowls. Tested and validated for rapid natural compostability.',
+    features: ['Leak-Proof Double Seam', 'Tight-Fit Paper Lids', 'Microwave Reheatable', 'Rigid Rolled Rim'],
     productName: 'Food Packaging',
     navLabel: 'Tubs',
   },

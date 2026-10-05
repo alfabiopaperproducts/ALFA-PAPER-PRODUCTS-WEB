@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { FloatingContact } from './components/layout/FloatingContact';
@@ -50,7 +50,7 @@ export const App: React.FC = () => {
               <Route path="/products/:slug" element={<ProductDetail onOpenQuoteModal={handleOpenQuoteModal} />} />
               <Route path="/sustainability" element={<Sustainability onOpenQuoteModal={() => handleOpenQuoteModal()} />} />
               <Route path="/quality" element={<QualityCompliance onOpenQuoteModal={() => handleOpenQuoteModal()} />} />
-              <Route path="/certificate" element={<QualityCompliance onOpenQuoteModal={() => handleOpenQuoteModal()} />} />
+              <Route path="/certificate" element={<Navigate to="/quality" replace />} />
               <Route path="/custom-solutions" element={<CustomSolutions onOpenQuoteModal={() => handleOpenQuoteModal()} />} />
               <Route path="/industries" element={<Industries onOpenQuoteModal={handleOpenQuoteModal} />} />
               <Route path="/contact" element={<Contact />} />

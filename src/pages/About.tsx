@@ -109,10 +109,10 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
               <div className="bg-kraft-50/70 p-6 rounded-2xl border border-charcoal-200/80 space-y-3">
                 <div className="flex items-center gap-3">
                   <ShieldCheck className="w-5 h-5 text-brand-600 flex-shrink-0" />
-                  <h4 className="font-bold text-sm text-charcoal-900">Certified Quality & Compliance</h4>
+                  <h4 className="font-bold text-sm text-charcoal-900">Certified Quality & Precision</h4>
                 </div>
                 <p className="text-xs text-charcoal-600 leading-relaxed">
-                  Rigorous automated production ensuring every batch complies with CPCB norms, CIPET compostability testing, and international food contact hygiene standards.
+                  Automated high-speed production ensuring consistent edge geometry, structural stability, and international food contact hygiene standards.
                 </p>
               </div>
             </div>
@@ -202,7 +202,7 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
               },
               {
                 title: 'Compliance Rigor',
-                desc: 'Active CPCB approval, EPR certification, and CIPET compostability testing.',
+                desc: 'Active adherence to statutory environmental directives, certified EPR registration, and verified lab standards.',
                 icon: <ShieldCheck className="w-5 h-5 text-brand-600" />,
               },
               {

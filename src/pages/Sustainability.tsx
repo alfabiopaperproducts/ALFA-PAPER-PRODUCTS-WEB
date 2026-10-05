@@ -135,8 +135,8 @@ export const Sustainability: React.FC<SustainabilityProps> = ({ onOpenQuoteModal
                 icon: <CheckCircle2 className="w-6 h-6 text-brand-600" />,
               },
               {
-                title: 'Tested for Compostability',
-                desc: 'Our products have undergone compostability testing at CIPET, Kochi, reinforcing our commitment to verified environmental stewardship.',
+                title: 'Circular Lifecycle Design',
+                desc: 'Products engineered to reintegrate safely into organic recovery streams or conventional paper recycling networks without synthetic residues.',
                 icon: <Award className="w-6 h-6 text-brand-600" />,
               },
             ].map((item, idx) => (

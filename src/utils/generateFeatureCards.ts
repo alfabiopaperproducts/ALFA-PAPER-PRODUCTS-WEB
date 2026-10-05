@@ -14,31 +14,31 @@ export const whyChooseFeaturesData: FeatureCardConfig[] = [
     title: 'Biodegradable',
     description: 'Designed to naturally break down under suitable environmental conditions, leaving no permanent footprint.',
     badge: 'ECO FRIENDLY',
-    subtext: 'Zero Permanent Microplastics'
+    subtext: 'Zero Microplastics'
   },
   {
     id: 'compostable',
-    iconName: 'recycle',
-    title: 'Compostable',
-    description: 'Products developed with compostability and responsible organic disposal in mind for circular packaging.',
+    iconName: 'award',
+    title: 'Compostability Verified',
+    description: 'Undergone rigorous laboratory testing at CIPET Kochi to validate organic disintegration and safety.',
     badge: 'CIPET TESTED',
-    subtext: 'Natural Organic Breakdown'
+    subtext: 'Lab-Verified Breakdown'
   },
   {
     id: 'plastic-free',
     iconName: 'shield',
-    title: 'Plastic Free',
-    description: 'Paper-based alternatives engineered to eliminate reliance on conventional single-use polymers.',
-    badge: '100% PAPER',
+    title: '100% Plastic Free',
+    description: 'Pure paperboard alternatives engineered to eliminate reliance on conventional single-use polymers.',
+    badge: 'PLASTIC FREE',
     subtext: 'Clean Sustainable Substitute'
   },
   {
     id: 'recyclable',
     iconName: 'loop',
-    title: 'Recyclable',
+    title: 'Recyclable Fiber',
     description: 'Paper-based products that support responsible material recovery and circular economy loops wherever facilities exist.',
-    badge: 'CIRCULAR PACKAGING',
-    subtext: 'Recoverable Fiber Base'
+    badge: 'CIRCULAR FIBER',
+    subtext: 'Recoverable Paper Base'
   },
   {
     id: 'food-grade',
@@ -53,24 +53,24 @@ export const whyChooseFeaturesData: FeatureCardConfig[] = [
     iconName: 'droplet',
     title: 'Oil & Grease Resistant',
     description: 'Engineered barrier protection designed to handle demanding, oily, saucy and hot foods with zero leak-through.',
-    badge: 'BARRIER PROTECTED',
-    subtext: 'High Structural Integrity'
+    badge: 'BARRIER COATED',
+    subtext: 'High Barrier Integrity'
   },
   {
-    id: 'env-responsible',
+    id: 'industrial-scale',
     iconName: 'globe',
-    title: 'Environmentally Responsible',
-    description: 'Created to assist modern commercial enterprises in transitioning to sustainable, lower-carbon packaging alternatives.',
-    badge: 'RESPONSIBLE B2B',
-    subtext: 'Supporting ESG Goals'
+    title: 'Industrial Scale Supply',
+    description: 'High-speed automated manufacturing lines capable of fulfilling high-volume retail and enterprise supply schedules.',
+    badge: 'HIGH CAPACITY',
+    subtext: '20+ Tons Daily Output'
   },
   {
-    id: 'cipet-tested',
-    iconName: 'award',
-    title: 'Compostability Tested',
-    description: 'Our products have undergone rigorous compostability and quality verification at CIPET Kochi.',
-    badge: 'GOVT. VERIFIED',
-    subtext: 'CIPET Kochi Testing Done'
+    id: 'custom-tooling',
+    iconName: 'recycle',
+    title: 'Custom Tooling & Print',
+    description: 'Bespoke dimensions, precision die-cutting, and multi-color flexo branding tailored to your exact specifications.',
+    badge: 'CUSTOM TOOLING',
+    subtext: 'Tailored B2B Sizing'
   }
 ];
 

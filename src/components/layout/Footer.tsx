@@ -31,7 +31,7 @@ export const Footer: React.FC = () => {
             <div className="flex items-center gap-3 text-xs text-charcoal-300">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-charcoal-800/80 border border-charcoal-700">
                 <Award className="w-3.5 h-3.5 text-brand-400" />
-                CIPET Tested
+                Lab-Verified Compostable
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-charcoal-800/80 border border-charcoal-700">
                 <ShieldCheck className="w-3.5 h-3.5 text-brand-400" />
@@ -64,7 +64,7 @@ export const Footer: React.FC = () => {
                 Certified Manufacturing
               </div>
               <p className="text-xs text-charcoal-400 leading-relaxed">
-                CIPET Kochi Compostability Tested • CPCB Approved • EPR Registered • 100% Food-Grade Board
+                Non-Toxic Virgin Fiber • Water-Based Barrier Technology • Zero Single-Use Plastics
               </p>
             </div>
           </div>
@@ -79,7 +79,7 @@ export const Footer: React.FC = () => {
                 { label: 'Home', href: '/' },
                 { label: 'About Us', href: '/about' },
                 { label: 'Products', href: '/products' },
-                { label: 'Certificate', href: '/certificate' },
+                { label: 'Quality & Compliance', href: '/quality' },
                 { label: 'Contact Us', href: '/contact' },
                 { label: 'Sustainability', href: '/sustainability' },
                 { label: 'Custom Solutions', href: '/custom-solutions' },

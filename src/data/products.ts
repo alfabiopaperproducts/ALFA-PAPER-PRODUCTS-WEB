@@ -104,9 +104,9 @@ export const productsData: Product[] = [
     ],
     sustainability_highlights: [
       '100% Plastic-Free construction available',
-      'CIPET Kochi Compostability Tested',
-      'Biodegradable under appropriate ambient conditions',
-      'Responsibly sourced food-grade board'
+      'Rapid disintegration under suitable composting conditions',
+      'Biodegradable without persistent microplastics',
+      'Responsibly sourced virgin food-grade board'
     ],
     image_url: plateImg,
     gallery: [plateImg, heroImg],
@@ -146,9 +146,9 @@ export const productsData: Product[] = [
       'Corporate & Institutional Beverage Service'
     ],
     sustainability_highlights: [
-      'Biodegradable and compostable options',
+      'Biodegradable and compostable lining options',
       'Substantially reduced plastic dependency',
-      'Tested under CIPET standards'
+      'Water-based plant-dispersion barrier coating'
     ],
     image_url: cupImg,
     gallery: [cupImg, heroImg],

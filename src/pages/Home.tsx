@@ -168,7 +168,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
               {/* Supporting Line & Badges */}
               <div className="pt-6 border-t border-charcoal-200/70">
                 <p className="text-xs font-bold uppercase tracking-wider text-charcoal-500 mb-3 leading-relaxed">
-                  CIPET Tested • 100% Food-Grade Board • Plastic-Free Barriers • Bulk Commercial Supply
+                  Industrial Scale Manufacturing • Precision Die-Cutting • Enterprise B2B Supply
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="green" size="md" icon={<Leaf className="w-3.5 h-3.5 text-brand-600" />}>
@@ -462,16 +462,16 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
 
                 <div className="space-y-4 text-xs sm:text-sm">
                   <div className="p-3.5 rounded-xl bg-[#112716]/80 border border-brand-500/20">
-                    <p className="font-bold text-brand-300">01. 100% Food-Grade Board</p>
-                    <p className="text-charcoal-300 mt-1">Zero toxic plasticisers or unsafe binders.</p>
+                    <p className="font-bold text-brand-300">01. Material Assessment & Audit</p>
+                    <p className="text-charcoal-300 mt-1">Evaluating existing disposable usage to recommend targeted paperboard GSM and barrier coatings.</p>
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#112716]/80 border border-brand-500/20">
-                    <p className="font-bold text-brand-300">02. CIPET Tested Compostability</p>
-                    <p className="text-charcoal-300 mt-1">Confirmed disintegration under natural composting conditions.</p>
+                    <p className="font-bold text-brand-300">02. Custom Tooling & Fitment</p>
+                    <p className="text-charcoal-300 mt-1">Precision die-cutting, structural prototyping, and airtight lid fitment testing for hot & oily foods.</p>
                   </div>
                   <div className="p-3.5 rounded-xl bg-[#112716]/80 border border-brand-500/20">
-                    <p className="font-bold text-brand-300">03. Full Regulatory Compliance</p>
-                    <p className="text-charcoal-300 mt-1">CPCB approved and registered under EPR directives.</p>
+                    <p className="font-bold text-brand-300">03. High-Volume Scheduled Supply</p>
+                    <p className="text-charcoal-300 mt-1">Dependable automated production runs ensuring uninterrupted restaurant and retail stock replenishment.</p>
                   </div>
                 </div>
               </div>
