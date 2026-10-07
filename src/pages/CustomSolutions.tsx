@@ -65,9 +65,6 @@ export const CustomSolutions: React.FC<CustomSolutionsProps> = ({ onOpenQuoteMod
       <section className="py-12 sm:py-16 bg-gradient-to-b from-kraft-100/60 via-kraft-50/40 to-white border-b border-charcoal-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
-              Custom Engineering & Tooling
-            </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal-900 tracking-tight">
               Paper Products Designed Around Your Requirement
             </h1>
@@ -84,7 +81,6 @@ export const CustomSolutions: React.FC<CustomSolutionsProps> = ({ onOpenQuoteMod
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 space-y-5">
               <SectionHeading
-                pill="Tailored Engineering"
                 title="Custom Manufacturing"
                 subtitle="Every business has different packaging and food-service needs."
               />
@@ -133,7 +129,6 @@ export const CustomSolutions: React.FC<CustomSolutionsProps> = ({ onOpenQuoteMod
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             align="center"
-            pill="Customization Parameters"
             title="What Can Be Customized?"
             subtitle="Explore the flexible variables we configure to match your commercial and technical specifications."
             className="mb-14"
@@ -161,7 +156,6 @@ export const CustomSolutions: React.FC<CustomSolutionsProps> = ({ onOpenQuoteMod
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             align="center"
-            pill="Development Workflow"
             title="How It Works"
             subtitle="A structured 4-step collaborative process from initial brief to high-volume production."
             className="mb-14"

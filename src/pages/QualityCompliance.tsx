@@ -32,9 +32,6 @@ export const QualityCompliance: React.FC<QualityProps> = ({ onOpenQuoteModal }) 
       <section className="py-12 sm:py-16 bg-gradient-to-b from-kraft-100/60 via-kraft-50/40 to-white border-b border-charcoal-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
-              Government Accreditations & Lab Reports
-            </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal-900 tracking-tight">
               Certificates & Regulatory Compliance
             </h1>
@@ -50,7 +47,6 @@ export const QualityCompliance: React.FC<QualityProps> = ({ onOpenQuoteModal }) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-5">
             <SectionHeading
-              pill="Our Approach"
               title="Our Approach to Quality"
               subtitle="Quality is fundamental to every product we manufacture."
             />
@@ -72,7 +68,6 @@ export const QualityCompliance: React.FC<QualityProps> = ({ onOpenQuoteModal }) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             align="center"
-            pill="Verified Standards"
             title="Certifications & Credentials"
             subtitle="Verified testing and active national statutory compliance."
             className="mb-14"
@@ -85,16 +80,13 @@ export const QualityCompliance: React.FC<QualityProps> = ({ onOpenQuoteModal }) 
                 className="gsap-stagger-item bg-white p-6 sm:p-8 rounded-2xl border border-charcoal-200/80 shadow-soft hover:border-brand-500/50 transition-all space-y-4 flex flex-col justify-between"
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="p-2.5 rounded-xl bg-brand-50 text-brand-600 border border-brand-100">
+                  <div>
+                    <span className="inline-flex p-2.5 rounded-xl bg-brand-50 text-brand-600 border border-brand-100">
                       {cred.iconName === 'Award' && <Award className="w-5 h-5" />}
                       {cred.iconName === 'ShieldCheck' && <ShieldCheck className="w-5 h-5" />}
                       {cred.iconName === 'Recycle' && <Recycle className="w-5 h-5" />}
                       {cred.iconName === 'CheckCircle2' && <CheckCircle2 className="w-5 h-5" />}
                       {cred.iconName === 'Leaf' && <Leaf className="w-5 h-5" />}
-                    </span>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-kraft-100 text-charcoal-800">
-                      {cred.badge}
                     </span>
                   </div>
 
@@ -117,7 +109,6 @@ export const QualityCompliance: React.FC<QualityProps> = ({ onOpenQuoteModal }) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             align="center"
-            pill="Quality Priorities"
             title="Our Quality Priorities"
             subtitle="7 foundational pillars embedded in our daily production process."
             className="mb-14"

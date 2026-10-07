@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, ArrowUpRight, ShieldCheck, Award } from 'lucide-react';
+import { MapPin, Phone, Mail, ArrowUpRight } from 'lucide-react';
 import { productCategories } from '../../data/products';
 import logoImg from '../../assets/logo.png';
 
@@ -10,37 +10,6 @@ export const Footer: React.FC = () => {
       {/* Subtle background ambient graphic */}
       <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 rounded-full bg-brand-500/5 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-96 h-96 rounded-full bg-brand-700/5 blur-3xl pointer-events-none" />
-
-      {/* Trust & Accreditations Banner */}
-      <div className="border-b border-charcoal-800/80 bg-charcoal-900/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400">
-                <ShieldCheck className="w-5 h-5" />
-              </span>
-              <div>
-                <p className="font-semibold text-white text-sm sm:text-base">
-                  Certified Sustainable Paper Packaging Solutions
-                </p>
-                <p className="text-xs text-charcoal-400">
-                  Trusted by premier supermarkets, hypermarkets, and food brands across South India.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-xs text-charcoal-300">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-charcoal-800/80 border border-charcoal-700">
-                <Award className="w-3.5 h-3.5 text-brand-400" />
-                Lab-Verified Compostable
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-charcoal-800/80 border border-charcoal-700">
-                <ShieldCheck className="w-3.5 h-3.5 text-brand-400" />
-                CPCB Approved & EPR
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-12">
@@ -172,15 +141,6 @@ export const Footer: React.FC = () => {
           <p>
             © {new Date().getFullYear()} ALFA PAPER PRODUCTS. All rights reserved.
           </p>
-          <div className="flex items-center gap-6">
-            <span className="text-charcoal-500">Established 1985 • Tirur, Kerala</span>
-            <Link to="/quality" className="hover:text-white transition-colors">
-              CPCB Compliance
-            </Link>
-            <Link to="/sustainability" className="hover:text-white transition-colors">
-              EPR Policy
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

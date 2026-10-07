@@ -201,9 +201,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQuoteModal }) => {
                 <span className="text-xs font-bold uppercase tracking-wider text-charcoal-400">
                   Navigation
                 </span>
-                <span className="text-xs font-semibold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-200">
-                  Certified Eco Packaging
-                </span>
               </div>
 
               {navLinks.map((link) => (

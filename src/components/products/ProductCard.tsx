@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check } from 'lucide-react';
 import { Product } from '../../types/product';
-import { Badge } from '../common/Badge';
 
 interface ProductCardProps {
   product: Product;
@@ -25,11 +24,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickQuote 
               e.currentTarget.src = '/assets/hero-sustainable-paper.jpg';
             }}
           />
-          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-            <Badge variant="green" size="sm">
-              Food-Grade
-            </Badge>
-          </div>
         </div>
 
         {/* Card Body */}

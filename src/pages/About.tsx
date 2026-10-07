@@ -33,9 +33,6 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
       <section className="py-12 sm:py-16 bg-gradient-to-b from-kraft-100/60 to-white border-b border-charcoal-100/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 text-brand-700 border border-brand-200 text-xs font-bold uppercase tracking-wider">
-              Tirur, Kerala • Industrial Packaging Leader
-            </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal-900 tracking-tight leading-tight">
               Pioneering Sustainable Paper Packaging Solutions
             </h1>
@@ -53,7 +50,6 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
             {/* Left Story Text (7 cols) */}
             <div className="lg:col-span-7 space-y-6">
               <SectionHeading
-                pill="Our Heritage"
                 title="The ALFA Story"
                 subtitle="From early industrial roots to modern automated sustainable manufacturing."
               />
@@ -125,7 +121,6 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             align="center"
-            pill="Strategic Purpose"
             title="Our Mission, Vision & Purpose"
             subtitle="Championing the transition away from single-use plastics through industrial scale and scientific responsibility."
             className="mb-14"
@@ -182,7 +177,6 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             align="center"
-            pill="Core Values"
             title="What Defines ALFA"
             subtitle="The foundational principles that guide every batch we manufacture."
             className="mb-14"
@@ -233,25 +227,9 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
 
       {/* Major Clients Showcase - Logos Only */}
       <ClientShowcase
-        pill="Retail & Commercial Partners"
         title="Trusted by Major Supermarkets & Hypermarkets"
         subtitle="Supplying food-grade, certified sustainable paper packaging to leading retail and hypermarket brands across South India."
       />
-
-      {/* CTA Strip */}
-      <section className="py-16 bg-[#162118] text-white text-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <h2 className="text-2xl sm:text-3xl font-bold">Ready to Partner with ALFA PAPER PRODUCTS?</h2>
-          <p className="text-charcoal-300 text-sm sm:text-base max-w-xl mx-auto">
-            Contact our sales and production team in Tirur, Kerala to discuss standard or custom paper requirements.
-          </p>
-          <div className="pt-2">
-            <Button variant="primary" size="lg" to="/contact">
-              Connect With Us
-            </Button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

@@ -22,7 +22,6 @@ import { AnimatedNumber } from '../components/common/AnimatedNumber';
 import { TextEffect } from '../components/core/text-effect';
 import { ProductCard } from '../components/products/ProductCard';
 import { productsData } from '../data/products';
-import { certificationsData } from '../data/certifications';
 import { industriesData } from '../data/industries';
 import { whyChooseFeatures, companyHeritageStats } from '../data/whyChooseUs';
 import { generateOrganizationSchema } from '../utils/seo';
@@ -44,7 +43,6 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
   const heroRef = useGsapReveal<HTMLDivElement>({ duration: 1, y: 25 });
   const productsRef = useGsapReveal<HTMLDivElement>({ stagger: 0.1, y: 25 });
   const featuresRef = useGsapReveal<HTMLDivElement>({ stagger: 0.08, y: 20 });
-  const credentialsRef = useGsapReveal<HTMLDivElement>({ stagger: 0.12, y: 25 });
   const industriesRef = useGsapReveal<HTMLDivElement>({ stagger: 0.08, y: 20 });
 
   useEffect(() => {
@@ -109,18 +107,6 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
           <div ref={heroRef} className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Hero Left Content (7 cols) */}
             <div className="lg:col-span-7 space-y-6">
-              {/* Certified Eco Badge */}
-              <div className="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-charcoal-200/80 shadow-xs max-w-full">
-                <span className="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0" />
-                <span className="text-xs font-bold uppercase tracking-wider text-brand-700 whitespace-nowrap">
-                  CERTIFIED ECO PACKAGING
-                </span>
-                <span className="text-charcoal-300 hidden sm:inline">•</span>
-                <span className="text-xs font-medium text-charcoal-600 hidden sm:inline whitespace-nowrap">
-                  Food-Grade & 100% Biodegradable
-                </span>
-              </div>
-
               {/* Main Headline */}
               <TextEffect
                 per="word"
@@ -276,7 +262,6 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
             {/* Right Story Content (7 cols) */}
             <div className="lg:col-span-7 space-y-5 order-1 lg:order-2">
               <SectionHeading
-                pill="About ALFA"
                 title="Industrial Quality. Sustainable Scale."
                 subtitle="ALFA PAPER PRODUCTS manufactures high-performance, responsible alternatives to single-use plastics, engineered for premier retail hypermarkets and commercial food brands."
               />
@@ -332,7 +317,6 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <SectionHeading
-              pill="Product Categories"
               title="Our Products"
               subtitle="Reliable paper-based solutions for food service, bakery, catering, hospitality and takeaway applications."
             />
@@ -370,9 +354,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             align="center"
-            pill="Why Choose ALFA"
             title="Responsible Products. Reliable Performance."
-            subtitle="Our products are designed to combine functionality, food safety and environmental responsibility."
             className="mb-14"
           />
 
@@ -426,7 +408,6 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
             <div className="lg:col-span-7 space-y-6">
               <SectionHeading
                 dark
-                pill="Environmental Impact"
                 title="Better Alternatives to Single-Use Plastics"
                 subtitle="Single-use plastic pollution is one of the major environmental challenges faced by businesses and communities today."
               />
@@ -480,68 +461,11 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
         </div>
       </section>
 
-      {/* 6. QUALITY & COMPLIANCE PREVIEW */}
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            {/* Left (5 cols) */}
-            <div className="lg:col-span-5 space-y-5">
-              <SectionHeading
-                pill="Certified Manufacturing"
-                title="Quality You Can Trust"
-                subtitle="Environmental responsibility must be supported by quality, safety and compliance."
-              />
-
-              <p className="text-sm sm:text-base text-charcoal-600 leading-relaxed">
-                Our product development and manufacturing practices focus on food-grade materials and responsible paper-based solutions.
-              </p>
-
-              <div className="pt-2">
-                <Button
-                  variant="outline"
-                  size="md"
-                  to="/quality"
-                  rightIcon={<ArrowRight className="w-4 h-4" />}
-                >
-                  Quality & Compliance
-                </Button>
-              </div>
-            </div>
-
-            {/* Right Credentials Grid (7 cols) */}
-            <div ref={credentialsRef} className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {certificationsData.map((cred) => (
-                <div
-                  key={cred.id}
-                  className="gsap-stagger-item bg-kraft-50/50 p-5 rounded-xl border border-charcoal-200/80 space-y-2 hover:border-brand-500/50 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="p-2 rounded-lg bg-brand-50 text-brand-600">
-                      {cred.iconName === 'Award' && <Award className="w-4 h-4" />}
-                      {cred.iconName === 'ShieldCheck' && <ShieldCheck className="w-4 h-4" />}
-                      {cred.iconName === 'Recycle' && <Recycle className="w-4 h-4" />}
-                      {cred.iconName === 'CheckCircle2' && <CheckCircle2 className="w-4 h-4" />}
-                      {cred.iconName === 'Leaf' && <Leaf className="w-4 h-4" />}
-                    </span>
-                    <Badge variant="green" size="sm">
-                      {cred.badge}
-                    </Badge>
-                  </div>
-                  <h3 className="font-bold text-charcoal-900 text-sm">{cred.title}</h3>
-                  <p className="text-xs text-charcoal-600 leading-relaxed">{cred.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. INDUSTRIES WE SERVE PREVIEW */}
+      {/* 6. INDUSTRIES WE SERVE PREVIEW */}
       <section className="py-16 sm:py-24 bg-kraft-100/40 border-y border-charcoal-200/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <SectionHeading
-              pill="Commercial Applications"
               title="Industries We Serve"
               subtitle="Built for Everyday Business Applications across diverse hospitality and food service environments."
             />
@@ -614,34 +538,6 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
                 </Button>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 9. CLOSING CTA BANNER */}
-      <section className="py-16 sm:py-24 bg-[#182319] text-white text-center relative overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-900/80 text-brand-300 text-xs font-bold uppercase tracking-wider border border-brand-700/50">
-            Partner With ALFA
-          </span>
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-            Make the Shift Towards Sustainable Packaging
-          </h2>
-          <p className="text-base sm:text-lg text-charcoal-300 leading-relaxed max-w-2xl mx-auto">
-            Partner with South India’s trusted manufacturer for dependable bulk supply, custom branding, and certified eco-friendly quality.
-          </p>
-          <div className="pt-2">
-            <p className="text-xs sm:text-sm font-semibold text-brand-400 uppercase tracking-widest mb-6">
-              Certified Sustainable Alternatives for a Greener Tomorrow
-            </p>
-            <Button
-              variant="primary"
-              size="lg"
-              to="/contact"
-              rightIcon={<ArrowRight className="w-4 h-4" />}
-            >
-              Get in Touch
-            </Button>
           </div>
         </div>
       </section>

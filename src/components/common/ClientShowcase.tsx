@@ -13,7 +13,6 @@ interface ClientShowcaseProps {
 export const ClientShowcase: React.FC<ClientShowcaseProps> = ({
   showHeading = true,
   className = '',
-  pill = 'Trusted by Industry Leaders',
   title = 'Supplying Leading Hypermarkets & Supermarkets',
   subtitle = 'Premier retail and supermarket networks count on ALFA PAPER PRODUCTS for certified food-safe, compostable, and plastic-free packaging.',
 }) => {
@@ -23,7 +22,6 @@ export const ClientShowcase: React.FC<ClientShowcaseProps> = ({
         {showHeading && (
           <SectionHeading
             align="center"
-            pill={pill}
             title={title}
             subtitle={subtitle}
             className="mb-10 sm:mb-12"

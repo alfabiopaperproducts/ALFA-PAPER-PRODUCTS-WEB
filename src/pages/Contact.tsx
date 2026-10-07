@@ -24,14 +24,11 @@ export const Contact: React.FC = () => {
       <section className="py-12 sm:py-16 bg-gradient-to-b from-kraft-100/60 via-kraft-50/40 to-white border-b border-charcoal-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
-              Get in Touch
-            </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal-900 tracking-tight">
               Let's Build a More Sustainable Future Together
             </h1>
             <p className="text-base sm:text-lg text-charcoal-600 font-medium">
-              For product enquiries, bulk orders, customized requirements or business partnerships, connect with ALFA PAPER PRODUCTS.
+              For product enquiries, bulk orders or customized requirements, connect with ALFA PAPER PRODUCTS.
             </p>
           </div>
         </div>
@@ -175,7 +172,7 @@ export const Contact: React.FC = () => {
                 </p>
               </div>
               <a
-                href="https://maps.google.com/?q=Vailathur+Athanikkal+Tirur+Kerala+676106"
+                href="https://maps.app.goo.gl/RzLrnoaQFw6WdXr39"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 hover:text-brand-700"
@@ -185,25 +182,19 @@ export const Contact: React.FC = () => {
               </a>
             </div>
 
-            {/* Clean stylized map preview frame */}
-            <div className="relative rounded-xl overflow-hidden aspect-[21/9] bg-kraft-100 border border-charcoal-200 flex items-center justify-center text-center p-6">
-              <div className="max-w-md space-y-2">
-                <MapPin className="w-8 h-8 text-brand-600 mx-auto animate-bounce" />
-                <p className="font-bold text-charcoal-800 text-sm sm:text-base">
-                  ALFA PAPER PRODUCTS
-                </p>
-                <p className="text-xs text-charcoal-500">
-                  Vailathur, Athanikkal, Tirur – 676106, Malappuram District, Kerala, India
-                </p>
-                <a
-                  href="https://maps.google.com/?q=Vailathur+Athanikkal+Tirur+Kerala+676106"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block mt-2 px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold shadow-xs transition-colors"
-                >
-                  Get Directions
-                </a>
-              </div>
+            {/* Embedded interactive Google Map */}
+            <div className="relative rounded-xl overflow-hidden border border-charcoal-200 aspect-[16/9] sm:aspect-[21/9] min-h-[360px] sm:min-h-[420px] bg-charcoal-100 shadow-inner">
+              <iframe
+                title="ALFA PAPER PRODUCTS Google Map Location"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.8653245465546!2d75.9367608!3d10.9556716!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba7b24e16fe2c4f%3A0x4ad81e415a4bdc91!2sALFA%20PAPER%20PRODUCTS!5e0!3m2!1sen!2sin!4v1728300000000!5m2!1sen!2sin"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="absolute inset-0 w-full h-full"
+              />
             </div>
           </div>
         </div>

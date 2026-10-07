@@ -806,27 +806,15 @@ export const HeroScrollAnimation: React.FC<HeroScrollAnimationProps> = ({ onOpen
         {/* Bottom subtle edge fade */}
         <div className="absolute inset-x-0 bottom-0 h-16 pointer-events-none bg-gradient-to-t from-[#f4f2ee]/80 to-transparent" />
 
-        {/* Top Brand Bar & Loading Indicator */}
-        <div className="absolute top-20 sm:top-24 left-3.5 sm:left-8 right-3.5 sm:right-8 z-20 flex items-center justify-between pointer-events-none">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-charcoal-200/80 shadow-xs pointer-events-auto">
-            <span className="w-2 h-2 rounded-full bg-brand-600 animate-pulse" />
-            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-charcoal-900">
-              ALFA 3D SHOWCASE
-            </span>
-            <span className="text-charcoal-300">•</span>
-            <span className="text-[11px] sm:text-xs font-medium text-brand-700">
-              Step {activeStep + 1} of {PRODUCT_STEPS.length}
-            </span>
-          </div>
-
-          {/* Load progress badge */}
-          {loadProgress < 100 && (
+        {/* Top Loading Indicator */}
+        {loadProgress < 100 && (
+          <div className="absolute top-20 sm:top-24 right-3.5 sm:right-8 z-20 pointer-events-none">
             <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-charcoal-900/80 text-white backdrop-blur-md text-[10px] sm:text-[11px] font-medium transition-opacity duration-500">
               <Sparkles className="w-3 h-3 text-brand-400 animate-spin" />
               <span>Optimizing 3D {loadProgress}%</span>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
 
         {/* Right-Side Stepped Navigation Indicators (Desktop & Tablet) */}

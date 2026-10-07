@@ -4,7 +4,6 @@ import { ArrowRight, CheckCircle2, Leaf, ShieldBan, Utensils, Award } from 'luci
 import { SeoHead } from '../components/common/SeoHead';
 import { Button } from '../components/common/Button';
 import { Breadcrumbs } from '../components/common/Breadcrumbs';
-import { Badge } from '../components/common/Badge';
 import { productsData } from '../data/products';
 import { useGsapReveal } from '../hooks/useGsapReveal';
 
@@ -32,9 +31,6 @@ export const Products: React.FC<ProductsProps> = ({ onOpenQuoteModal }) => {
       <section className="py-12 sm:py-16 bg-gradient-to-b from-kraft-100/60 via-kraft-50/40 to-white border-b border-charcoal-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
-              Commercial Paper Packaging Catalog
-            </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal-900 tracking-tight">
               Sustainable Paper Products for Everyday Applications
             </h1>
@@ -98,11 +94,6 @@ export const Products: React.FC<ProductsProps> = ({ onOpenQuoteModal }) => {
                         loading="lazy"
                         className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                       />
-                      <div className="absolute top-3 left-3">
-                        <Badge variant="green" size="sm">
-                          {prod.category}
-                        </Badge>
-                      </div>
                     </div>
                   </div>
 

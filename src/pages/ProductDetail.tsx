@@ -4,7 +4,6 @@ import { ArrowRight, Check, ShieldCheck, Leaf, Recycle, Utensils, MessageSquare,
 import { SeoHead } from '../components/common/SeoHead';
 import { Button } from '../components/common/Button';
 import { Breadcrumbs } from '../components/common/Breadcrumbs';
-import { Badge } from '../components/common/Badge';
 import { RelatedProducts } from '../components/products/RelatedProducts';
 import { getProductBySlug } from '../services/productService';
 import { productsData } from '../data/products';
@@ -135,14 +134,6 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ onOpenQuoteModal }
             {/* Right: Product Details (6 cols) */}
             <div className="lg:col-span-6 space-y-6">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="green" size="md">
-                    {product.category}
-                  </Badge>
-                  <Badge variant="kraft" size="md">
-                    Est. 1985
-                  </Badge>
-                </div>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-charcoal-900 tracking-tight">
                   {product.name}
                 </h1>

@@ -30,9 +30,6 @@ export const Sustainability: React.FC<SustainabilityProps> = ({ onOpenQuoteModal
       <section className="py-12 sm:py-16 bg-gradient-to-b from-brand-50/50 via-kraft-50/40 to-white border-b border-charcoal-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
-              Environmental Responsibility
-            </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal-900 tracking-tight">
               Sustainability Is at the Heart of What We Manufacture
             </h1>
@@ -49,7 +46,6 @@ export const Sustainability: React.FC<SustainabilityProps> = ({ onOpenQuoteModal
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 space-y-5">
               <SectionHeading
-                pill="Our Responsibility"
                 title="Supporting the Transition Away from Plastic"
                 subtitle="Why modern food service packaging requires a conscious shift."
               />
@@ -84,12 +80,6 @@ export const Sustainability: React.FC<SustainabilityProps> = ({ onOpenQuoteModal
                 <p className="text-sm text-charcoal-600 leading-relaxed">
                   Our products have undergone compostability testing at the Central Institute of Petrochemicals Engineering & Technology (CIPET), Kochi, reinforcing our commitment to developing environmentally responsible paper solutions.
                 </p>
-                <div className="pt-2">
-                  <span className="inline-flex items-center gap-2 text-xs font-bold text-brand-700 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
-                    <Award className="w-3.5 h-3.5" />
-                    CIPET Kochi Verified
-                  </span>
-                </div>
               </div>
             </div>
           </div>
@@ -101,7 +91,6 @@ export const Sustainability: React.FC<SustainabilityProps> = ({ onOpenQuoteModal
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             align="center"
-            pill="Core Principles"
             title="Designed with the Environment in Mind"
             subtitle="Our approach focuses on reducing dependence on conventional disposable plastics while maintaining everyday commercial usability."
             className="mb-14"
@@ -160,7 +149,6 @@ export const Sustainability: React.FC<SustainabilityProps> = ({ onOpenQuoteModal
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <SectionHeading
             align="center"
-            pill="Business Impact"
             title="Helping Businesses Make a Better Choice"
             subtitle="Every transition away from unnecessary plastic contributes to a larger environmental goal."
           />
