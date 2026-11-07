@@ -5,24 +5,27 @@ export interface CredentialItem {
   description: string;
   highlight: string;
   iconName: 'Award' | 'ShieldCheck' | 'Recycle' | 'CheckCircle2' | 'Leaf';
+  certificateUrl?: string;
 }
 
 export const certificationsData: CredentialItem[] = [
   {
     id: 'cipet',
-    title: 'CIPET Kochi Compostability Testing',
+    title: 'CIPET Compostability Report',
     badge: 'Compostability Tested',
     description: 'Our products have successfully undergone rigorous compostability testing at the Central Institute of Petrochemicals Engineering & Technology (CIPET), Kochi.',
     highlight: 'Rigorous disintegration & eco-toxicity validation',
     iconName: 'Award',
+    certificateUrl: '/Assets/Certificates/CIPET -Alfa Paper Products.pdf',
   },
   {
     id: 'cpcb',
-    title: 'CPCB Approval',
+    title: 'CPCB Certificate',
     badge: 'Regulatory Compliant',
     description: 'ALFA PAPER PRODUCTS products are approved by the Central Pollution Control Board (CPCB) as applicable to our product category and regulatory requirements.',
     highlight: 'Strict compliance with plastic ban mandates',
     iconName: 'ShieldCheck',
+    certificateUrl: '/Assets/Certificates/ALFA CPCB.pdf',
   },
   {
     id: 'epr',
@@ -31,6 +34,7 @@ export const certificationsData: CredentialItem[] = [
     description: 'ALFA PAPER PRODUCTS is registered under applicable Extended Producer Responsibility (EPR) requirements, promoting circular economy accountability.',
     highlight: 'Demonstrated lifecycle waste stewardship',
     iconName: 'Recycle',
+    certificateUrl: '/Assets/Certificates/Alfa EPR Certificate.pdf',
   },
   {
     id: 'food-grade',

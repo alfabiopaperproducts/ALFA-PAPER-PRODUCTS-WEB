@@ -236,9 +236,6 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
         </div>
       </section>
 
-      {/* MAJOR CLIENT SHOWCASE - LOGOS ONLY */}
-      <ClientShowcase />
-
       {/* 2. ABOUT PREVIEW SECTION */}
       <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -378,6 +375,9 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
           </div>
         </div>
       </section>
+
+      {/* MAJOR CLIENT SHOWCASE - LOGOS ONLY */}
+      <ClientShowcase />
 
       {/* 5. SUSTAINABILITY HIGHLIGHT */}
       <section className="py-16 sm:py-24 lg:py-28 text-white relative overflow-hidden bg-[#061408] min-h-[580px] flex items-center">

@@ -161,17 +161,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQuoteModal }) => {
               </Button>
             </div>
 
-            {/* Mobile Menu Actions - Protected from overlapping */}
-            <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden flex-shrink-0">
-              <Button
-                variant="primary"
-                size="sm"
-                to={onOpenQuoteModal ? undefined : '/contact'}
-                onClick={onOpenQuoteModal}
-                className="text-xs px-2.5 sm:px-3 py-1.5 whitespace-nowrap"
-              >
-                Quote
-              </Button>
+            {/* Mobile Menu Toggle Button */}
+            <div className="flex items-center lg:hidden flex-shrink-0">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

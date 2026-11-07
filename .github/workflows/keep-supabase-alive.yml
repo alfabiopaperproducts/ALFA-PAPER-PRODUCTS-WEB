@@ -1,0 +1,23 @@
+name: Keep Supabase Awake
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every 3 days
+    - cron: '0 0 */3 * *'
+  workflow_dispatch: # Allows manual one-click trigger from GitHub Actions UI
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Database
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://kdyglzuowvjjclpuqnas.supabase.co' }}
+          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkeWdsenVvd3ZqamNscHVxbmFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3NzA5MDgsImV4cCI6MjEwNDM0NjkwOH0.CpqSysvSLYlM_Y1iqIYLGxBnHPDT7SRFCdFsItqy_x8' }}
+        run: |
+          echo "Sending minimal keep-alive query to Supabase..."
+          curl -f -s -S -X GET "$SUPABASE_URL/rest/v1/products?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -o /dev/null -w "HTTP Status: %{http_code} | Response Time: %{time_total}s\n"
+          echo "Supabase keep-alive ping completed successfully."

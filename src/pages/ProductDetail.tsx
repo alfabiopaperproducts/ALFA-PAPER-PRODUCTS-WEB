@@ -213,7 +213,9 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ onOpenQuoteModal }
                     Request Product Details
                   </Button>
                   <a
-                    href="https://wa.me/919895667040?text=Hello%20ALFA%20Team%2C%20I%20am%20enquiring%20about%20your%20"
+                    href={`https://wa.me/919895667040?text=${encodeURIComponent(
+                      `Hello ALFA Team, I am enquiring about your ${product.name}.`
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg border border-charcoal-300 text-charcoal-800 text-sm font-semibold hover:bg-white transition-colors"
