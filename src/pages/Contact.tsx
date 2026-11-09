@@ -64,6 +64,7 @@ export const Contact: React.FC = () => {
                       </strong>
                       Vailathur, Athanikkal<br />
                       Tirur – 676106<br />
+                      Malappuram District<br />
                       Kerala, India
                     </address>
                   </div>

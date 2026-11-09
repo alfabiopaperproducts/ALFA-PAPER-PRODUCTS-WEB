@@ -98,6 +98,7 @@ export const Footer: React.FC = () => {
                   <strong className="text-white block font-medium">ALFA PAPER PRODUCTS</strong>
                   Vailathur, Athanikkal<br />
                   Tirur – 676106<br />
+                  Malappuram District<br />
                   Kerala, India
                 </address>
               </div>

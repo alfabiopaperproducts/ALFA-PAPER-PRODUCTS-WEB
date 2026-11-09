@@ -4,7 +4,6 @@ import { SeoHead } from '../components/common/SeoHead';
 import { Button } from '../components/common/Button';
 import { SectionHeading } from '../components/common/SectionHeading';
 import { Breadcrumbs } from '../components/common/Breadcrumbs';
-import { ClientShowcase } from '../components/common/ClientShowcase';
 import { useGsapReveal } from '../hooks/useGsapReveal';
 import heroImg from '../assets/hero-sustainable-paper.jpg';
 
@@ -224,12 +223,6 @@ export const About: React.FC<AboutProps> = ({ onOpenQuoteModal }) => {
           </div>
         </div>
       </section>
-
-      {/* Major Clients Showcase - Logos Only */}
-      <ClientShowcase
-        title="Trusted by Major Supermarkets & Hypermarkets"
-        subtitle="Supplying food-grade, certified sustainable paper packaging to leading retail and hypermarket brands across South India."
-      />
     </div>
   );
 };

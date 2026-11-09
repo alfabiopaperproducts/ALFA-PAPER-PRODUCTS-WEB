@@ -57,8 +57,6 @@ export const ClientShowcase: React.FC<ClientShowcaseProps> = ({
 
         {/* Secondary continuous marquee strip for a dynamic feel */}
         <div className="mt-8 pt-6 border-t border-charcoal-100 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-charcoal-500 uppercase tracking-wider text-center">
-          <span>15+ Major Supermarket Chains</span>
-          <span className="hidden sm:inline text-charcoal-300">•</span>
           <span>Pan-South India & GCC Distribution</span>
           <span className="hidden sm:inline text-charcoal-300">•</span>
           <span>100% Certified Food-Grade Quality</span>

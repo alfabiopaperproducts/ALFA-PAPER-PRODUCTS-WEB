@@ -58,7 +58,7 @@ export const qualityPriorities = [
   { title: 'Material Quality', desc: 'Premium grade paperboard with consistent strength and density' },
   { title: 'Food Safety', desc: 'Complies with rigorous standards for direct food contact' },
   { title: 'Functional Performance', desc: 'Thermal stability and structural rigidity under load' },
-  { title: 'Oil & Grease Resistance', desc: 'Effective barrier treatment without plastic leakage' },
+  { title: 'Oil & Grease Resistance', desc: 'Effective barrier treatment without leakage' },
   { title: 'Product Consistency', desc: 'Uniform die-cutting and folding precision on modern equipment' },
   { title: 'Responsible Manufacturing', desc: 'Clean, low-waste automated production with sustainable material sourcing' },
   { title: 'Environmental Compliance', desc: 'Full adherence to national environmental directives and EPR norms' },

@@ -13,6 +13,7 @@ import {
   ShieldBan,
   Building2,
   Sparkles,
+  Sprout,
 } from 'lucide-react';
 import { SeoHead } from '../components/common/SeoHead';
 import { Button } from '../components/common/Button';
@@ -160,7 +161,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
                   <Badge variant="green" size="md" icon={<Leaf className="w-3.5 h-3.5 text-brand-600" />}>
                     Biodegradable
                   </Badge>
-                  <Badge variant="green" size="md" icon={<Recycle className="w-3.5 h-3.5 text-brand-600" />}>
+                  <Badge variant="green" size="md" icon={<Sprout className="w-3.5 h-3.5 text-brand-600" />}>
                     Compostable
                   </Badge>
                   <Badge variant="green" size="md" icon={<ShieldBan className="w-3.5 h-3.5 text-brand-600" />}>
@@ -168,6 +169,9 @@ export const Home: React.FC<HomeProps> = ({ onOpenQuoteModal }) => {
                   </Badge>
                   <Badge variant="green" size="md" icon={<Utensils className="w-3.5 h-3.5 text-brand-600" />}>
                     Food-Grade
+                  </Badge>
+                  <Badge variant="green" size="md" icon={<Recycle className="w-3.5 h-3.5 text-brand-600" />}>
+                    Recycling
                   </Badge>
                 </div>
               </div>

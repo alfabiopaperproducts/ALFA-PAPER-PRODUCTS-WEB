@@ -43,7 +43,7 @@ export const FactoryVideoSection: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(58); // Fallback to 58 seconds matching reference
+  const [duration, setDuration] = useState(47); // Fallback matching new video duration (47s)
   const [showControls, setShowControls] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const controlsTimeoutRef = useRef<number | null>(null);
@@ -267,7 +267,7 @@ export const FactoryVideoSection: React.FC = () => {
                 {/* HTML5 Video Element */}
                 <video
                   ref={videoRef}
-                  src="/Assets/Video/alfa-factory-video.mp4"
+                  src="/Assets/Video/alfa-factory-video.mp4?v=2"
                   className="w-full h-full object-cover cursor-pointer"
                   playsInline
                   preload="metadata"
