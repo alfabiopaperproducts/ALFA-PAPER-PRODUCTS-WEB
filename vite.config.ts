@@ -15,7 +15,7 @@ export default defineConfig({
     port: 3000,
     open: false,
     watch: {
-      ignored: ['**/*.pdf'],
+      ignored: ['**/*.pdf', '**/*.jpg', '**/*.jpeg', '**/*.png', '**/*.webp', '**/*.glb', '**/Public/**', '**/public/**'],
     },
   },
   build: {

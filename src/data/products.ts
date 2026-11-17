@@ -6,6 +6,10 @@ import cupImg from '../assets/products/paper-cups.jpg';
 import trayImg from '../assets/products/paper-trays.jpg';
 import burgerImg from '../assets/products/burger-boxes.jpg';
 import bakeryImg from '../assets/products/bakery-boxes.jpg';
+import cakeBox1 from '../assets/products/Cake box 1.jpeg';
+import cakeBox2 from '../assets/products/Cake box 2.jpeg';
+import cakeBox3 from '../assets/products/Cake box 3.jpeg';
+import cakeBox4 from '../assets/products/Cake box 4.jpeg';
 import foodImg from '../assets/products/food-packaging.jpg';
 import customImg from '../assets/products/custom-paper-products.jpg';
 import heroImg from '../assets/hero-sustainable-paper.jpg';
@@ -270,7 +274,7 @@ export const productsData: Product[] = [
       'Free from non-biodegradable laminates'
     ],
     image_url: bakeryImg,
-    gallery: [bakeryImg, heroImg],
+    gallery: [bakeryImg, cakeBox1, cakeBox2, cakeBox3, cakeBox4],
     seo_title: 'Bakery Boxes Manufacturer in Kerala | ALFA PAPER PRODUCTS',
     seo_description: 'Premium paper packaging solutions for cakes, pastries, and confectionery. Food-grade, sturdy, and sustainable bakery boxes.',
     sort_order: 5,
